@@ -2,7 +2,12 @@
   "name": "uk-life",
   "private": true,
   "version": "0.1.0",
+  "description": "A free 3D life sim in the browser, set in rainy London.",
+  "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
