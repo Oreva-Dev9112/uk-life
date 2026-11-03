@@ -50,13 +50,13 @@ export const AREA_VISUALS: Record<AreaId, AreaVisual> = {
       gym: { kind: "gym", name: "PUREFLEX", sub: "GYM · OPEN LATE", neon: "#ff4fd8" },
     },
     shops: {
-      breggs: { name: "BREGGS", sub: "The Bakers", kind: "bakery", bg: "#0b2a5b", fg: "#fbd34d", hours: [6, 19], awning: ["#0b2a5b", "#f1f5f9"], placeId: "breggs" },
+      crumbs: { name: "CRUMBS", sub: "The Bakers", kind: "bakery", bg: "#0b2a5b", fg: "#fbd34d", hours: [6, 19], awning: ["#0b2a5b", "#f1f5f9"], placeId: "crumbs" },
       chippy: { name: "THE CODFATHER", sub: "Traditional Fish & Chips", kind: "chippy", bg: "#0e4d92", fg: "#ffffff", hours: [11, 23], placeId: "chippy" },
       shop: { name: "KWIK MART", sub: "Open 24 Hours · Groceries · Off Licence", kind: "shop", bg: "#15803d", fg: "#ffffff", hours: [0, 24], placeId: "shop" },
       laundrette: { name: "SPIN CITY", sub: "Launderette & Dry Cleaning", kind: "laundrette", bg: "#0284c7", fg: "#ffffff", hours: [7, 22], placeId: "laundrette" },
     },
     decor: [
-      { x: -66, side: "n", name: "FOXES", sub: "Lettings & Estate Agents", kind: "generic", bg: "#151515", fg: "#f5a623", hours: [9, 18] },
+      { x: -66, side: "n", name: "MAGPIE", sub: "Lettings & Estate Agents", kind: "generic", bg: "#151515", fg: "#f5a623", hours: [9, 18] },
       { x: -54, side: "n", name: "CLOUD 9 VAPES", kind: "vape", bg: "#120a1f", fg: "#d8b4fe", hours: [9, 22], neon: true },
       { x: -6, side: "n", name: "PHONE FIX", sub: "Unlocking · Repairs · Cases", kind: "generic", bg: "#0b3a5a", fg: "#ffffff", hours: [9, 20] },
       { x: 6, side: "n", name: "PERI PERI PALACE", sub: "Chicken · Burgers · Wraps", kind: "generic", bg: "#b91c1c", fg: "#fde047", hours: [11, 26] },

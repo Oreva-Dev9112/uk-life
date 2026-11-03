@@ -556,7 +556,7 @@ export const useGame = create<State>()((set, get) => {
       fade("Out on the bike…");
       tick(60, "work");
       addNeeds({ hygiene: surge ? -6 : -2 });
-      earn(pay, "Delivaroo run");
+      earn(pay, "NoshRun delivery");
       toast(`Delivery run done. +${fmtMoney(pay)}${surge ? " (rain surge!)" : ""}`, "good");
     },
 

@@ -45,7 +45,7 @@ export interface Job {
 
 export const JOBS: Record<JobId, Job> = {
   barista: {
-    id: "barista", title: "Barista", employer: "Breggs", placeId: "breggs",
+    id: "barista", title: "Barista", employer: "Crumbs", placeId: "crumbs",
     hourly: LIVING_WAGE, start: 7, end: 15,
     blurb: "Sausage rolls and flat whites for the morning rush.",
   },
@@ -60,7 +60,7 @@ export const JOBS: Record<JobId, Job> = {
     blurb: "Pull pints, dodge Gaz's stories. Tips on a good night.",
   },
   rider: {
-    id: "rider", title: "Delivery Rider", employer: "Delivaroo", placeId: null,
+    id: "rider", title: "Delivery Rider", employer: "NoshRun", placeId: null,
     hourly: 0, start: 0, end: 24,
     blurb: "Paid per drop, any time, from your phone. Rain means surge pay.",
   },
@@ -184,7 +184,7 @@ export const PLACES: Place[] = [
     ],
   },
   {
-    id: "breggs", area: "albion", name: "Breggs", tagline: "Bakers since last Tuesday.", kind: "bakery",
+    id: "crumbs", area: "albion", name: "Crumbs", tagline: "Bakers since last Tuesday.", kind: "bakery",
     x: -18, side: "n", plots: 1, hours: [6, 19],
     actions: [
       { id: "roll", label: "Sausage roll", price: 1.45, minutes: 5, needs: { hunger: 18 }, toast: "Flaky pastry everywhere. Worth it." },
@@ -413,7 +413,7 @@ export const NPCS: NpcDef[] = [
     intro: "Priya. I'm a nurse at the Royal London, so if I look dead inside, that's why.",
     look: { skin: "#a8724f", hair: "#1c1410", jacket: "#2f4f6f", trousers: "#1f2430", hairStyle: "long", gender: "female" },
     anchor: [-17, 7.6], likes: { weather: 0.8, banter: -0.2, flirt: 0.2 },
-    workTip: "Breggs is always hiring. They go through baristas like sausage rolls.",
+    workTip: "Crumbs is always hiring. They go through baristas like sausage rolls.",
   },
   {
     id: "tunde", area: "albion", name: "Tunde", age: 24, role: "Music producer",
@@ -434,7 +434,7 @@ export const NPCS: NpcDef[] = [
     intro: "Chloe. Art student. My dissertation is about launderettes, don't ask.",
     look: { skin: "#f1c9ad", hair: "#b5532a", jacket: "#5b7a3a", trousers: "#262b3d", hairStyle: "bun", gender: "female" },
     anchor: [37, -7.5], likes: { weather: -0.4, banter: 0.4, flirt: 0.6 },
-    workTip: "Delivaroo riders make bank when it rains. So, always.",
+    workTip: "NoshRun riders make bank when it rains. So, always.",
   },
   {
     id: "mo", area: "albion", name: "Mo", age: 33, role: "Runs Kwik Mart",
@@ -448,7 +448,7 @@ export const NPCS: NpcDef[] = [
     intro: "Siobhan. PT at PureFlex. You look like you skip leg day.",
     look: { skin: "#f3d2c1", hair: "#d8b25a", jacket: "#be185d", trousers: "#111827", hairStyle: "long", gender: "female" },
     anchor: [68, -7.6], likes: { weather: 0.1, banter: 0.8, flirt: 0.3 },
-    workTip: "Gym's not hiring, but Delivaroo is. Free cardio.",
+    workTip: "Gym's not hiring, but NoshRun is. Free cardio.",
   },
   {
     id: "marcus", area: "city", name: "Marcus", age: 31, role: "Investment banker",
