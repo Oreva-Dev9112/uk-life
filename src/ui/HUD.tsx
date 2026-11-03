@@ -27,7 +27,8 @@ export function TopBar() {
         <span className="text-sm font-medium text-white/85">{AREAS[area].name}</span>
         <span className="text-sm text-white/45">{AREAS[area].postcode}</span>
       </div>
-      <div className="glass hidden items-center gap-2 rounded-2xl px-3.5 py-2 sm:flex">
+      {/* (weather waits for lg: below that it wraps onto a second row, under the goals) */}
+      <div className="glass hidden items-center gap-2 rounded-2xl px-3.5 py-2 lg:flex">
         <Icon name={WEATHER_ICON[weather]} size={16} className="text-sky-200/80" />
         <span className="text-sm text-white/75">{WEATHER_LABEL[weather]}</span>
       </div>
@@ -35,7 +36,7 @@ export function TopBar() {
   );
 }
 
-export function Goals() {
+export function Goals({ touch }: { touch: boolean }) {
   const s = useGame();
   const anyMate = Object.values(s.rel).some((v) => v >= 50);
   const owed = rentOwedWeeks(s);
@@ -49,7 +50,8 @@ export function Goals() {
   const target = objectiveTarget(s);
   const visible = goals.filter((g) => !g.done).slice(0, 3);
   return (
-    <div className="pointer-events-none absolute left-3 top-[4.2rem] hidden w-64 sm:left-4 sm:block">
+    // On touch screens the needs strip sits under the top bar, so the goals go below it.
+    <div className={`pointer-events-none absolute left-3 hidden w-64 sm:left-4 sm:block ${touch ? "top-[6.6rem]" : "top-[4.2rem]"}`}>
       <div className="glass rounded-2xl p-3">
         <div className="mb-2 flex items-center justify-between">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-white/45">Goals</span>
@@ -133,7 +135,8 @@ export function InteractPrompt({ touch }: { touch: boolean }) {
   const interact = useGame((s) => s.interact);
   if (!nearby || panel || phoneOpen) return null;
   return (
-    <div className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${touch ? "bottom-40" : "bottom-8"}`}>
+    // Desktop: centred in the space right of the needs panel, until the screen is wide enough to clear it.
+    <div className={`pointer-events-none absolute inset-x-0 flex justify-center ${touch ? "bottom-40" : "bottom-8 pl-[15.5rem] pr-4 lg:px-0"}`}>
       <button
         onClick={() => { interact(); audio.blip(); }}
         className="glass pointer-events-auto flex items-center gap-3 rounded-2xl py-2.5 pl-2.5 pr-5 text-left transition hover:bg-white/10 active:scale-[0.98] animate-rise"
@@ -148,10 +151,12 @@ export function InteractPrompt({ touch }: { touch: boolean }) {
   );
 }
 
-export function Toasts() {
+export function Toasts({ touch }: { touch: boolean }) {
   const toasts = useGame((s) => s.toasts);
+  // From sm the goals panel takes the top-left, so toasts sit to its right until lg, where a centred toast clears it.
+  // Touch screens keep them below the needs strip.
   return (
-    <div className="pointer-events-none absolute left-1/2 top-[6.8rem] flex w-[min(92vw,26rem)] -translate-x-1/2 flex-col items-center gap-2 sm:top-[4.4rem]">
+    <div className={`pointer-events-none absolute left-1/2 top-[6.8rem] flex w-[min(92vw,26rem)] -translate-x-1/2 flex-col items-center gap-2 sm:left-[17.5rem] sm:right-4 sm:w-auto sm:translate-x-0 lg:left-1/2 lg:right-auto lg:w-[min(92vw,26rem)] lg:-translate-x-1/2 ${touch ? "" : "sm:top-[4.4rem]"}`}>
       {toasts.map((t) => (
         <div
           key={t.id}

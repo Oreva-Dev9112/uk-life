@@ -53,7 +53,7 @@ export function App() {
       {ready && phase === "playing" && (
         <div className="pointer-events-none absolute inset-0">
           <TopBar />
-          <Goals />
+          <Goals touch={isTouch} />
           <Needs touch={isTouch} />
           {isTouch && !panel && <Joystick />}
           <InteractPrompt touch={isTouch} />
@@ -63,7 +63,7 @@ export function App() {
           {panel?.kind === "tube" && <TubePanel />}
           <PhoneButton />
           <Phone />
-          <Toasts />
+          <Toasts touch={isTouch} />
           <Fade />
         </div>
       )}
