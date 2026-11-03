@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useGame, type Look } from "../state/store";
+import { useGame, fmtTime, WEATHER_LABEL, type Look } from "../state/store";
 import { BACKGROUNDS, type Background, type Gender, type HairStyle } from "../state/content";
 import { audio } from "../game/systems/audio";
 import { Icon } from "./Icon";
@@ -36,6 +36,8 @@ export function TitleScreen() {
   const profile = useGame((s) => s.profile);
   const startGame = useGame((s) => s.startGame);
   const setDraft = useGame((s) => s.setDraftLook);
+  const minutes = useGame((s) => s.minutes);
+  const weather = useGame((s) => s.weather);
   const [name, setName] = useState(profile.name);
   const [bg, setBg] = useState<Background>(profile.background);
   const [look, setLook] = useState<Look>(profile.look);
@@ -59,7 +61,7 @@ export function TitleScreen() {
         <div className="pointer-events-auto flex h-full flex-col justify-end gap-6 p-6 pb-10 sm:justify-center sm:p-14 animate-fadein">
           <div>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium tracking-wide text-white/70">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse-soft" /> East London · Tonight · Raining (obviously)
+              <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse-soft" /> East London · {fmtTime(minutes)} · {WEATHER_LABEL[weather]}
             </div>
             <h1 className="font-display text-6xl font-bold leading-[0.9] tracking-tight sm:text-8xl">
               UK <span className="text-brand">LIFE</span>
@@ -72,7 +74,10 @@ export function TitleScreen() {
             <button onClick={() => setStep("create")} className="rounded-2xl bg-brand px-7 py-4 font-display text-lg font-semibold shadow-lg shadow-brand/30 transition hover:bg-brand-dark active:scale-[0.98]">
               Start a new life
             </button>
-            <span className="text-sm text-white/50">Free · Plays in your browser</span>
+            <span className="text-sm text-white/50">
+              Free · Plays in your browser · Live London weather by{" "}
+              <a href="https://open-meteo.com/" target="_blank" rel="noreferrer" className="underline decoration-white/30 underline-offset-2 hover:text-white/80">Open-Meteo.com</a>
+            </span>
           </div>
         </div>
       ) : (

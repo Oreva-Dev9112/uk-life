@@ -11,7 +11,7 @@ People who like life sims such as The Sims, Gameloft's *Miami Nights* / *My Life
 ## What you can do
 
 - **Make a character:** name, gender (man, woman, non-binary), skin, hair and clothes, with a live 3D preview.
-- **Live on a London high street** with a day/night cycle and British weather (plenty of rain, the odd clear spell). Wet roads, street lamps, neon and traffic that drives on the left.
+- **Live on a London high street** in London's real weather. You arrive at the real time of day, and from then on the weather follows the actual London forecast hour by hour, with sunrise and sunset to match. Wet roads, street lamps, neon and traffic that drives on the left.
 - **Look after your needs:** hunger, energy, hygiene, fun and social.
 - **Work:** baristas, fryers, bar staff, delivery riders, waiters, club promoters, market traders and a City analyst job that needs a suit and experience. Wages use the UK National Living Wage (£12.71/hr from April 2026).
 - **Pay rent** every week, or get evicted after two missed weeks.
@@ -31,6 +31,8 @@ People who like life sims such as The Sims, Gameloft's *Miami Nights* / *My Life
 - [Vite](https://vitejs.dev/) and TypeScript
 
 Every texture (brick, slate, asphalt, signs, shop interiors) is drawn in code at start-up, and the characters, vehicles and buildings are built from code. There are no downloaded 3D models or image assets. The fonts (Inter and Space Grotesk) load from Google Fonts.
+
+Weather and sunrise/sunset times come from [Open-Meteo](https://open-meteo.com/), which is free and needs no API key (data under CC BY 4.0). If it can't be reached, the game makes up its own weather.
 
 ## Run it locally
 

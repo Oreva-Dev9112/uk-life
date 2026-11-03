@@ -6,7 +6,7 @@ import {
 } from "postprocessing";
 import { buildWorld, disposeTree, shopIsOn, type World } from "./world/street";
 import { AREA_VISUALS } from "./world/areas";
-import { createSky, skyAt } from "./world/sky";
+import { createSky, skyAt, skyHourFor } from "./world/sky";
 import { createRain } from "./world/rain";
 import { createLighting } from "./world/lighting";
 import { FACADE } from "./world/layout";
@@ -16,10 +16,10 @@ import { Player } from "./actors/Player";
 import { CameraRig } from "./actors/CameraRig";
 import { input } from "./systems/input";
 import { audio } from "./systems/audio";
-import { useGame, hourOf, objectiveTarget } from "../state/store";
+import { useGame, hourOf, objectiveTarget, realTimeAt } from "../state/store";
+import { londonDaylightAt } from "../state/london";
 import { npcById, placesIn, type AreaId, type Place } from "../state/content";
 
-const TITLE_MINUTES = 18 * 60 + 52;
 const STAGE_FACING = -Math.PI / 2 - 0.35; // the creator preview faces down the pavement, slightly towards the road
 const GAME_MINUTES_PER_SECOND = 1;
 
@@ -325,17 +325,19 @@ export class Game {
       this.accum += dt;
       if (this.accum >= 0.25) { s.tick(this.accum * GAME_MINUTES_PER_SECOND); this.accum = 0; }
     }
-    const minutes = playing ? useGame.getState().minutes : TITLE_MINUTES;
+    const minutes = useGame.getState().minutes;
     const hour = hourOf(minutes);
+    const daylight = londonDaylightAt(realTimeAt(s, minutes));
+    const skyHour = daylight ? skyHourFor(hour, daylight.sunrise, daylight.sunset) : hour;
 
     // weather
-    const weather = playing ? s.weather : "rain";
+    const weather = s.weather;
     this.rainVis = THREE.MathUtils.damp(this.rainVis, RAIN_TARGET[weather], 0.4, dt);
     this.cloudVis = THREE.MathUtils.damp(this.cloudVis, CLOUD_TARGET[weather], 0.3, dt);
     this.wet = this.rainVis > 0.15 ? THREE.MathUtils.damp(this.wet, 1, 0.6, dt) : Math.max(0, this.wet - dt / 150);
 
     // sky + light
-    const sk = skyAt(hour, this.cloudVis, this.rainVis);
+    const sk = skyAt(skyHour, this.cloudVis, this.rainVis);
     const night = sk.night;
     const u = this.sky.uniforms;
     u.uTop.value.copy(sk.top);
@@ -359,7 +361,7 @@ export class Game {
     this.sun.position.copy(focus).addScaledVector(sk.sunDir, 80);
     this.sun.target.position.copy(focus);
     this.scene.environmentIntensity = THREE.MathUtils.lerp(0.9, 0.55, night);
-    this.updateEnvironment(hour, dt);
+    this.updateEnvironment(skyHour, dt);
 
     // materials that follow time of day / weather
     const W = this.world;

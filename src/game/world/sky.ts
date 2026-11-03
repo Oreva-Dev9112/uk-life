@@ -9,7 +9,7 @@ interface Key {
   night: number;
 }
 
-// London in October: sunrise ~07:15, sunset ~18:15.
+// Tuned for a London October day (sunrise ~07:12, sunset ~18:18); skyHourFor fits them to the real day.
 const KEYS: Key[] = [
   { h: 0, top: "#050812", horizon: "#1c1a28", fog: "#0e0f17", sun: "#7d8fc0", sunI: 0.22, hemiSky: "#27304d", hemiGround: "#0c0b0d", hemiI: 0.35, night: 1 },
   { h: 5.2, top: "#070b18", horizon: "#22202e", fog: "#11121b", sun: "#7d8fc0", sunI: 0.2, hemiSky: "#27304d", hemiGround: "#0c0b0d", hemiI: 0.38, night: 1 },
@@ -23,6 +23,15 @@ const KEYS: Key[] = [
   { h: 21, top: "#070b18", horizon: "#1f1d2d", fog: "#10111a", sun: "#7d8fc0", sunI: 0.22, hemiSky: "#27304d", hemiGround: "#0c0b0d", hemiI: 0.36, night: 1 },
   { h: 24, top: "#050812", horizon: "#1c1a28", fog: "#0e0f17", sun: "#7d8fc0", sunI: 0.22, hemiSky: "#27304d", hemiGround: "#0c0b0d", hemiI: 0.35, night: 1 },
 ];
+
+const KEY_SUNRISE = 7.2, KEY_SUNSET = 18.3;
+
+/** Maps a London hour onto the keys' day, so dawn and dusk land on the real sunrise and sunset. */
+export function skyHourFor(hour: number, sunrise: number, sunset: number) {
+  if (hour < sunrise) return (hour / sunrise) * KEY_SUNRISE;
+  if (hour < sunset) return KEY_SUNRISE + ((hour - sunrise) / (sunset - sunrise)) * (KEY_SUNSET - KEY_SUNRISE);
+  return KEY_SUNSET + ((hour - sunset) / (24 - sunset)) * (24 - KEY_SUNSET);
+}
 
 const keyColors = KEYS.map((k) => ({
   top: new THREE.Color(k.top), horizon: new THREE.Color(k.horizon), fog: new THREE.Color(k.fog),

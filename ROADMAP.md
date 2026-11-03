@@ -16,6 +16,8 @@ Planned work, roughly in order. Hours are estimates.
 - [ ] **Go inside your flat** (~8 h). A small interior you can walk around and later decorate.
 - [ ] **Better characters** (~8 h). Replace the shape-built people with proper models and animations under an open licence (for example CC0).
 - [ ] **Sound** (~3 h). Ambience and music that change by district and time of day.
+- [ ] **Snow** (~2 h). The real forecast sometimes says snow; for now it falls as drizzle.
+- [ ] **Cache the weather** (~1 h). Open-Meteo's free tier allows fewer than 10,000 calls a day per app. One call per visit is fine for now, but if the game gets busy the forecast should come through a cached Vercel function, so it's a few calls an hour however many people play.
 
 ## More London
 
@@ -33,6 +35,7 @@ Planned work, roughly in order. Hours are estimates.
 - Characters and vehicles are simple placeholder shapes.
 - Tested in desktop Chrome and an emulated phone, not on real phones or in Safari.
 - Sound has not been checked by ear.
+- Day 1 is always a Monday, even though the time and weather follow the real date.
 
 ## Not planned for now
 

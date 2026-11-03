@@ -4,6 +4,7 @@ import {
   isOpen, npcById, placeById, relationshipTier, travelMinutes, tubeRunning,
   type AreaId, type Background, type Gender, type HairStyle, type JobId, type NeedKey, type Needs, type Topic,
 } from "./content";
+import { londonMinutesNow, londonWeatherAt } from "./london";
 
 // ---------- time helpers ----------
 export const dayOf = (m: number) => Math.floor(m / 1440) + 1;
@@ -52,6 +53,8 @@ interface State {
   money: number;
   needs: Needs;
   minutes: number;
+  syncedAt: number; // real time (ms) when this life started...
+  syncMinutes: number; // ...and the game minute it started at (see realTimeAt)
   weather: WeatherKind;
   weatherUntil: number;
   job: JobId | null;
@@ -85,6 +88,7 @@ interface State {
   travel: (to: AreaId, fromStation: boolean) => void;
   restart: () => void;
   tick: (dm: number, mode?: Mode) => void;
+  syncWeather: () => void;
   setNearby: (n: Nearby | null) => void;
   interact: () => void;
   openPanel: (p: Panel) => void;
@@ -120,38 +124,45 @@ function saveSettings(s: { quality: Quality; volume: number }) {
   try { localStorage.setItem("uklife.settings", JSON.stringify(s)); } catch { /* storage unavailable */ }
 }
 
-const START_MINUTES = 18 * 60 + 30; // Day 1 (Monday), 18:30
+// A life starts on Day 1 (Monday) at London's real time of day. From then on each game minute stands for one
+// minute of real London time after the start, so the weather can follow the real forecast hour by hour.
+export const realTimeAt = (s: { syncedAt: number; syncMinutes: number }, m: number) => s.syncedAt + (m - s.syncMinutes) * 60_000;
 
-const freshGame = () => ({
-  gameOverReason: "",
-  money: 0,
-  needs: { hunger: 60, energy: 72, hygiene: 55, fun: 50, social: 35 } as Needs,
-  minutes: START_MINUTES,
-  weather: "rain" as WeatherKind,
-  weatherUntil: START_MINUTES + 60, // (the arrival downpour lasts a game hour, so new players see it change early)
-  job: null as JobId | null,
-  lastShiftDay: 0,
-  rentWeeksPaid: 0,
-  rentStrikes: 0,
-  rel: Object.fromEntries(NPCS.map((n) => [n.id, 0])) as Record<string, number>,
-  met: {} as Record<string, boolean>,
-  topicAt: {} as Record<string, number>,
-  visitedFlat: false,
-  area: "albion" as AreaId,
-  visited: { albion: true, city: false, soho: false, camden: false } as Record<AreaId, boolean>,
-  shiftsWorked: 0,
-  hasSuit: false,
-  mumPaidWeek: 0,
-  messages: [] as Message[],
-  txs: [] as Tx[],
-  nearby: null as Nearby | null,
-  panel: null as Panel,
-  dialog: [] as DialogLine[],
-  phoneOpen: false,
-  phoneApp: "home" as PhoneApp,
-  fade: null,
-  teleport: null,
-});
+const freshGame = () => {
+  const start = londonMinutesNow();
+  return {
+    gameOverReason: "",
+    money: 0,
+    needs: { hunger: 60, energy: 72, hygiene: 55, fun: 50, social: 35 } as Needs,
+    minutes: start,
+    syncedAt: Date.now(),
+    syncMinutes: start,
+    weather: "rain" as WeatherKind,
+    weatherUntil: start + 60, // (with no forecast, the arrival downpour lasts a game hour)
+    job: null as JobId | null,
+    lastShiftDay: 0,
+    rentWeeksPaid: 0,
+    rentStrikes: 0,
+    rel: Object.fromEntries(NPCS.map((n) => [n.id, 0])) as Record<string, number>,
+    met: {} as Record<string, boolean>,
+    topicAt: {} as Record<string, number>,
+    visitedFlat: false,
+    area: "albion" as AreaId,
+    visited: { albion: true, city: false, soho: false, camden: false } as Record<AreaId, boolean>,
+    shiftsWorked: 0,
+    hasSuit: false,
+    mumPaidWeek: 0,
+    messages: [] as Message[],
+    txs: [] as Tx[],
+    nearby: null as Nearby | null,
+    panel: null as Panel,
+    dialog: [] as DialogLine[],
+    phoneOpen: false,
+    phoneApp: "home" as PhoneApp,
+    fade: null,
+    teleport: null,
+  };
+};
 
 export const mood = (n: Needs) => NEED_KEYS.reduce((a, k) => a + n[k], 0) / NEED_KEYS.length;
 export const currentWeek = (m: number) => Math.floor((dayOf(m) - 1) / 7) + 1;
@@ -196,11 +207,21 @@ export const useGame = create<State>()((set, get) => {
     toast(`New message from ${from}`);
   };
 
-  const rollWeather = (now: number) => {
-    const r = Math.random();
-    const weather: WeatherKind = r < 0.25 ? "rain" : r < 0.5 ? "drizzle" : r < 0.8 ? "overcast" : "clear";
-    set({ weather, weatherUntil: now + 120 + Math.random() * 240 });
-    if (weather === "clear") toast("The sun's out! Everyone panic.", "good");
+  // London's real weather for this game minute when the forecast covers it; otherwise make some up.
+  const updateWeather = (now: number, announce = true) => {
+    const s = get();
+    const live = londonWeatherAt(realTimeAt(s, now));
+    let weather: WeatherKind, until: number;
+    if (live) {
+      weather = live.kind;
+      until = now + live.minutesLeft;
+    } else {
+      const r = Math.random();
+      weather = r < 0.25 ? "rain" : r < 0.5 ? "drizzle" : r < 0.8 ? "overcast" : "clear";
+      until = now + 120 + Math.random() * 240;
+    }
+    set({ weather, weatherUntil: until });
+    if (announce && weather === "clear" && s.weather !== "clear") toast("The sun's out! Everyone panic.", "good");
   };
 
   const onNewDay = (day: number) => {
@@ -256,7 +277,7 @@ export const useGame = create<State>()((set, get) => {
       onNewDay(d);
       if (get().phase !== "playing") return;
     }
-    if (after >= get().weatherUntil) rollWeather(after);
+    if (after >= get().weatherUntil) updateWeather(after);
     if (mode === "awake" && n.energy <= 0) passOut();
   };
 
@@ -285,13 +306,23 @@ export const useGame = create<State>()((set, get) => {
 
     startGame: (profile) => {
       set({ ...freshGame(), profile, phase: "playing", money: BACKGROUNDS[profile.background].money, teleport: { ...SPAWN, key: uid++ } });
+      get().syncWeather();
       setTimeout(() => {
         message("Kev (Landlord)", "Alright, it's Kev. Room's at 27 Albion Road, across the road from the station and up a bit. Red door, key's under the mat. Rent's £185 a week, due Sunday night. Cheers.");
       }, 1800);
       setTimeout(() => message("Mum", `Text me when you get there!! Wrap up warm, it's meant to rain. Love Mum xx`), 5200);
     },
 
-    restart: () => set({ ...freshGame(), phase: "title" }),
+    restart: () => {
+      set({ ...freshGame(), phase: "title" });
+      get().syncWeather();
+    },
+
+    // Switches to London's real weather straight away (at the start of a life, or when the forecast arrives).
+    syncWeather: () => {
+      const s = get();
+      if (londonWeatherAt(realTimeAt(s, s.minutes))) updateWeather(s.minutes, false);
+    },
 
     travel: (to, fromStation) => {
       const s = get();
