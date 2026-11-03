@@ -128,7 +128,7 @@ const freshGame = () => ({
   needs: { hunger: 60, energy: 72, hygiene: 55, fun: 50, social: 35 } as Needs,
   minutes: START_MINUTES,
   weather: "rain" as WeatherKind,
-  weatherUntil: START_MINUTES + 240,
+  weatherUntil: START_MINUTES + 60, // (the arrival downpour lasts a game hour, so new players see it change early)
   job: null as JobId | null,
   lastShiftDay: 0,
   rentWeeksPaid: 0,
@@ -198,7 +198,7 @@ export const useGame = create<State>()((set, get) => {
 
   const rollWeather = (now: number) => {
     const r = Math.random();
-    const weather: WeatherKind = r < 0.38 ? "rain" : r < 0.65 ? "drizzle" : r < 0.9 ? "overcast" : "clear";
+    const weather: WeatherKind = r < 0.25 ? "rain" : r < 0.5 ? "drizzle" : r < 0.8 ? "overcast" : "clear";
     set({ weather, weatherUntil: now + 120 + Math.random() * 240 });
     if (weather === "clear") toast("The sun's out! Everyone panic.", "good");
   };

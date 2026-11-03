@@ -11,7 +11,7 @@ People who like life sims such as The Sims, Gameloft's *Miami Nights* / *My Life
 ## What you can do
 
 - **Make a character:** name, gender (man, woman, non-binary), skin, hair and clothes, with a live 3D preview.
-- **Live on a London high street** with a day/night cycle and British weather (mostly rain). Wet roads, street lamps, neon and traffic that drives on the left.
+- **Live on a London high street** with a day/night cycle and British weather (plenty of rain, the odd clear spell). Wet roads, street lamps, neon and traffic that drives on the left.
 - **Look after your needs:** hunger, energy, hygiene, fun and social.
 - **Work:** baristas, fryers, bar staff, delivery riders, waiters, club promoters, market traders and a City analyst job that needs a suit and experience. Wages use the UK National Living Wage (£12.71/hr from April 2026).
 - **Pay rent** every week, or get evicted after two missed weeks.
