@@ -4,7 +4,7 @@ import type { WeatherKind } from "./store";
 
 const FORECAST_URL =
   "https://api.open-meteo.com/v1/forecast?latitude=51.5072&longitude=-0.1276" +
-  "&hourly=weather_code&daily=sunrise,sunset&timezone=Europe%2FLondon&timeformat=unixtime&forecast_days=16";
+  "&current=weather_code&hourly=weather_code&daily=sunrise,sunset&timezone=Europe%2FLondon&timeformat=unixtime&forecast_days=16";
 
 interface Forecast {
   hourStart: number; // unix seconds of the first hourly entry
@@ -29,10 +29,14 @@ export async function loadLondonForecast(): Promise<boolean> {
   try {
     const res = await fetch(FORECAST_URL, { signal: AbortSignal.timeout(8000) });
     if (!res.ok) return false;
-    const { hourly, daily } = await res.json();
+    const { current, hourly, daily } = await res.json();
+    const kinds: WeatherKind[] = hourly.weather_code.map(kindOf);
+    // The hourly forecast can differ from what's happening now, so the current hour uses the latest 15-minute reading.
+    const nowHour = current ? Math.floor((current.time - hourly.time[0]) / 3600) : -1;
+    if (nowHour >= 0 && nowHour < kinds.length) kinds[nowHour] = kindOf(current.weather_code);
     forecast = {
       hourStart: hourly.time[0],
-      kinds: hourly.weather_code.map(kindOf),
+      kinds,
       days: daily.time.map((start: number, i: number) => ({
         start,
         sunrise: (daily.sunrise[i] - start) / 3600,
