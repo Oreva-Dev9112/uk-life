@@ -19,6 +19,7 @@ import { audio } from "./systems/audio";
 import { useGame, hourOf, objectiveTarget, realTimeAt } from "../state/store";
 import { londonDaylightAt } from "../state/london";
 import { npcById, placesIn, type AreaId, type Place } from "../state/content";
+import { seeThroughUniforms } from "./world/seeThrough";
 
 const STAGE_FACING = -Math.PI / 2 - 0.35; // the creator preview faces down the pavement, slightly towards the road
 const GAME_MINUTES_PER_SECOND = 1;
@@ -309,6 +310,22 @@ export class Game {
     this.envRT = rt;
   }
 
+  // Where the player is on screen, for the hole cut in leaves and awnings that would hide them.
+  private cutPos = new THREE.Vector3();
+  private bufferSize = new THREE.Vector2();
+  private updateSeeThrough(on: boolean) {
+    const u = seeThroughUniforms;
+    if (!on) { u.uCutRadius.value = 0; return; }
+    this.camera.updateMatrixWorld();
+    const p = this.cutPos.copy(this.player.pos);
+    p.y += 1.15; // (chest height, so the hole also covers an umbrella)
+    u.uCutDepth.value = -p.clone().applyMatrix4(this.camera.matrixWorldInverse).z - 0.6;
+    p.project(this.camera);
+    this.renderer.getDrawingBufferSize(this.bufferSize);
+    u.uCutCenter.value.set((p.x * 0.5 + 0.5) * this.bufferSize.x, (p.y * 0.5 + 0.5) * this.bufferSize.y);
+    u.uCutRadius.value = this.bufferSize.y * 0.14;
+  }
+
   private loop = () => {
     this.raf = requestAnimationFrame(this.loop);
     this.timer.update();
@@ -412,6 +429,7 @@ export class Game {
     ring.opacity = input.clickTarget ? Math.max(0.35, ring.opacity - dt) : Math.max(0, ring.opacity - dt * 3);
 
     this.rig.update(dt, this.player.pos);
+    this.updateSeeThrough(playing && this.rig.mode === "follow");
     this.lighting.update(dt, focus, night, this.wet, this.rainVis, hour);
     this.rain.update(t, this.camera.position, this.rainVis, night);
     audio.setRain(this.rainVis);

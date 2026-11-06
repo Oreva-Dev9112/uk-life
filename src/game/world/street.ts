@@ -7,6 +7,7 @@ import {
 } from "./layout";
 import { placesIn, type AreaId, type Place, type Side } from "../../state/content";
 import { AREA_VISUALS, type Landmark, type ShopSpec } from "./areas";
+import { seeThrough } from "./seeThrough";
 
 export interface Switchable {
   material: THREE.MeshStandardMaterial;
@@ -93,7 +94,7 @@ export function buildWorld(areaId: AreaId = "albion"): World {
     windowLit: std({ map: windowDay, emissive: "#ffffff", emissiveMap: windowAtlas, emissiveIntensity: 1, roughness: 0.1 }),
     lampGlow: std({ color: "#1a1410", emissive: "#ffc27a", emissiveIntensity: 6, roughness: 0.3 }),
     tiles: std({ map: tiles, roughness: 0.18, metalness: 0.05 }),
-    foliage: std({ color: "#46663c", roughness: 0.8, flatShading: true }),
+    foliage: seeThrough(std({ color: "#46663c", roughness: 0.8, flatShading: true })),
     markWhite: std({ color: "#d9d9d3", roughness: 0.5, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }),
     markYellow: std({ color: "#d6a21e", roughness: 0.5, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }),
     shelterGlass: std({ color: "#9fb6c6", roughness: 0.05, transparent: true, opacity: 0.22, depthWrite: false }),
@@ -255,7 +256,7 @@ export function buildWorld(areaId: AreaId = "albion"): World {
     if (spec.kind !== "empty") switchables.push({ material: signMat, hours: spec.neon ? spec.hours : [0, 24], base: spec.neon ? 2.6 : 0.9, day: 0.25 });
     if (spec.awning) {
       const at = T.stripeTexture(spec.awning[0], spec.awning[1], 10);
-      const am = new THREE.MeshStandardMaterial({ map: at, roughness: 0.7, side: THREE.DoubleSide });
+      const am = seeThrough(new THREE.MeshStandardMaterial({ map: at, roughness: 0.7, side: THREE.DoubleSide }));
       const a = new THREE.Mesh(PLANE, am);
       a.matrixAutoUpdate = false;
       a.matrix.copy(P.clone().multiply(mat(0, KERB_H + 2.55, -0.68, -2.03, Math.PI, 0, w - 0.4, 1.5, 1)));
@@ -538,7 +539,7 @@ export function buildWorld(areaId: AreaId = "albion"): World {
       for (const ox of [-1.4, 1.4]) for (const oz of [-0.65, 0.65]) box("paint", cx + ox, KERB_H + 1.2, zc + oz, 0.08, 2.4, 0.08, { color: "#2b2b2b" });
       box("paint", cx, KERB_H + 0.45, zc + dir * 0.2, 2.8, 0.9, 0.9, { color: "#7a5230" });
       for (let k = 0; k < 8; k++) box("paint", cx - 1.2 + (k % 4) * 0.8 + r() * 0.2, KERB_H + 0.98, zc + dir * (k < 4 ? 0 : 0.35), 0.35, 0.18 + r() * 0.2, 0.25, { color: pick(goods) });
-      const am = new THREE.MeshStandardMaterial({ map: T.stripeTexture(colourways[i][0], colourways[i][1], 8), roughness: 0.7, side: THREE.DoubleSide });
+      const am = seeThrough(new THREE.MeshStandardMaterial({ map: T.stripeTexture(colourways[i][0], colourways[i][1], 8), roughness: 0.7, side: THREE.DoubleSide }));
       const canopy = new THREE.Mesh(PLANE, am);
       canopy.position.set(cx, KERB_H + 2.45, zc);
       canopy.rotation.set(-Math.PI / 2 + dir * 0.18, 0, 0);
