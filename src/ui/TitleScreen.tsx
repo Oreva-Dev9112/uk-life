@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useGame, fmtTime, WEATHER_LABEL, type Look } from "../state/store";
-import { BACKGROUNDS, type Background, type Gender, type HairStyle } from "../state/content";
+import { useGame, dayOf, fmtMoney, fmtTime, WEATHER_LABEL, type Look } from "../state/store";
+import { AREAS, BACKGROUNDS, type Background, type Gender, type HairStyle } from "../state/content";
+import { readSave } from "../state/save";
 import { audio } from "../game/systems/audio";
 import { Icon } from "./Icon";
 
@@ -38,6 +39,8 @@ export function TitleScreen() {
   const setDraft = useGame((s) => s.setDraftLook);
   const minutes = useGame((s) => s.minutes);
   const weather = useGame((s) => s.weather);
+  const continueGame = useGame((s) => s.continueGame);
+  const [save] = useState(readSave);
   const [name, setName] = useState(profile.name);
   const [bg, setBg] = useState<Background>(profile.background);
   const [look, setLook] = useState<Look>(profile.look);
@@ -49,10 +52,17 @@ export function TitleScreen() {
   useEffect(() => { setDraft(step === "create" ? look : null); }, [step, look, setDraft]);
   useEffect(() => () => setDraft(null), [setDraft]);
 
-  const start = () => {
+  const startAudio = () => {
     audio.start();
     audio.setVolume(useGame.getState().settings.volume);
+  };
+  const start = () => {
+    startAudio();
     startGame({ name: name.trim() || "You", background: bg, look });
+  };
+  const resume = () => {
+    startAudio();
+    continueGame();
   };
 
   return (
@@ -71,7 +81,20 @@ export function TitleScreen() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <button onClick={() => setStep("create")} className="rounded-2xl bg-brand px-7 py-4 font-display text-lg font-semibold shadow-lg shadow-brand/30 transition hover:bg-brand-dark active:scale-[0.98]">
+            {save && (
+              <button onClick={resume} className="rounded-2xl bg-brand px-7 py-3 text-left shadow-lg shadow-brand/30 transition hover:bg-brand-dark active:scale-[0.98]">
+                <span className="block font-display text-lg font-semibold">Continue</span>
+                <span className="block text-xs text-white/75">
+                  {save.life.profile?.name} · Day {dayOf(save.life.minutes!)} · {fmtMoney(save.life.money ?? 0)} · {AREAS[save.life.area ?? "albion"].name}
+                </span>
+              </button>
+            )}
+            <button
+              onClick={() => setStep("create")}
+              className={save
+                ? "rounded-2xl border border-white/20 bg-white/5 px-6 py-4 font-display text-lg font-semibold transition hover:bg-white/10 active:scale-[0.98]"
+                : "rounded-2xl bg-brand px-7 py-4 font-display text-lg font-semibold shadow-lg shadow-brand/30 transition hover:bg-brand-dark active:scale-[0.98]"}
+            >
               Start a new life
             </button>
             <span className="text-sm text-white/50">
@@ -143,6 +166,7 @@ export function TitleScreen() {
             <button onClick={start} className="w-full rounded-2xl bg-brand py-4 font-display text-lg font-semibold shadow-lg shadow-brand/30 transition hover:bg-brand-dark active:scale-[0.99]">
               Arrive in London →
             </button>
+            {save && <p className="mt-3 text-center text-xs text-amber-200/80">This replaces your saved life as {save.life.profile?.name}.</p>}
             <p className="mt-3 text-center text-xs text-white/45">
               Drag the street to turn your character · In game: WASD walk · Shift run · E interact · P phone
             </p>

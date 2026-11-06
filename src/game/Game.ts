@@ -60,6 +60,7 @@ export class Game {
   private wet = 1;
   private rainVis = 1;
   private cloudVis = 1;
+  private snapWeather = true; // (show the weather as it is, without fading, when a life starts or resumes)
   private marker = new THREE.Group();
   private tapRing: THREE.Mesh;
   private unsubs: (() => void)[] = [];
@@ -229,6 +230,7 @@ export class Game {
       }
       if (s.phase !== prev.phase) {
         if (s.phase === "playing") {
+          this.snapWeather = true;
           this.player.setLook(s.profile.look, this.scene);
           this.player.char.root.visible = true;
           this.player.facing = Math.PI / 2;
@@ -332,9 +334,17 @@ export class Game {
 
     // weather
     const weather = s.weather;
-    this.rainVis = THREE.MathUtils.damp(this.rainVis, RAIN_TARGET[weather], 0.4, dt);
-    this.cloudVis = THREE.MathUtils.damp(this.cloudVis, CLOUD_TARGET[weather], 0.3, dt);
-    this.wet = this.rainVis > 0.15 ? THREE.MathUtils.damp(this.wet, 1, 0.6, dt) : Math.max(0, this.wet - dt / 150);
+    if (!playing || this.snapWeather) {
+      // title screen, or a life just started: no fading in from the last weather shown
+      this.rainVis = RAIN_TARGET[weather];
+      this.cloudVis = CLOUD_TARGET[weather];
+      this.wet = this.rainVis > 0.15 ? 1 : 0;
+      if (playing) this.snapWeather = false;
+    } else {
+      this.rainVis = THREE.MathUtils.damp(this.rainVis, RAIN_TARGET[weather], 0.4, dt);
+      this.cloudVis = THREE.MathUtils.damp(this.cloudVis, CLOUD_TARGET[weather], 0.3, dt);
+      this.wet = this.rainVis > 0.15 ? THREE.MathUtils.damp(this.wet, 1, 0.6, dt) : Math.max(0, this.wet - dt / 150);
+    }
 
     // sky + light
     const sk = skyAt(skyHour, this.cloudVis, this.rainVis);

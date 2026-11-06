@@ -4,7 +4,7 @@ Planned work, roughly in order. Hours are estimates.
 
 ## Next up
 
-- [ ] **Save and load** (~4 h). Keep progress in the browser so a refresh doesn't wipe your life. Local only, no accounts.
+- [x] **Save and load**. Your life autosaves in the browser and Continue picks it up again. Local only, no accounts.
 - [ ] **Needs with consequences** (~3 h). Right now hunger and hygiene can sit at zero with no effect, and passing out gives you a free night's sleep. Add proper penalties: getting ill, being sent home from work, locals avoiding you.
 - [ ] **Tests for the game rules** (~4 h). Unit tests (Vitest) for rent and eviction, shifts and pay, travel and fares, job requirements and relationships.
 - [ ] **Continuous integration** (~1 h). A GitHub Action that type-checks, tests and builds every push.
@@ -31,7 +31,7 @@ Planned work, roughly in order. Hours are estimates.
 
 ## Known issues
 
-- Single-player only, and nothing is saved yet.
+- Single-player only. Saves live in one browser, so they don't follow you to another device.
 - Characters and vehicles are simple placeholder shapes.
 - Tested in desktop Chrome and an emulated phone, not on real phones or in Safari.
 - Sound has not been checked by ear.

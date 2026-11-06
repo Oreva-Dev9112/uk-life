@@ -5,6 +5,7 @@ import {
   type AreaId, type Background, type Gender, type HairStyle, type JobId, type NeedKey, type Needs, type Topic,
 } from "./content";
 import { londonMinutesNow, londonWeatherAt } from "./london";
+import { clearSave, readSave, writeSave } from "./save";
 
 // ---------- time helpers ----------
 export const dayOf = (m: number) => Math.floor(m / 1440) + 1;
@@ -46,7 +47,7 @@ export const WEATHER_LABEL: Record<WeatherKind, string> = {
   rain: "Chucking it down", drizzle: "Drizzle", overcast: "Overcast", clear: "Clear (rare)",
 };
 
-interface State {
+export interface State {
   phase: "title" | "playing" | "gameover";
   gameOverReason: string;
   profile: Profile;
@@ -85,6 +86,7 @@ interface State {
 
   setDraftLook: (l: Look | null) => void;
   startGame: (p: Profile) => void;
+  continueGame: () => void;
   travel: (to: AreaId, fromStation: boolean) => void;
   restart: () => void;
   tick: (dm: number, mode?: Mode) => void;
@@ -313,7 +315,30 @@ export const useGame = create<State>()((set, get) => {
       setTimeout(() => message("Mum", `Text me when you get there!! Wrap up warm, it's meant to rain. Love Mum xx`), 5200);
     },
 
+    continueGame: () => {
+      const save = readSave();
+      if (!save) return;
+      const fresh = freshGame();
+      const life = save.life;
+      // On top of a fresh game, so anything added since the save gets its default.
+      set({
+        ...fresh,
+        ...life,
+        rel: { ...fresh.rel, ...life.rel },
+        visited: { ...fresh.visited, ...life.visited },
+        // Time picks up where you left off; the weather follows London from now on.
+        syncedAt: Date.now(),
+        syncMinutes: life.minutes ?? fresh.minutes,
+        phase: "playing",
+        teleport: { ...SPAWN, key: uid++ },
+      });
+      // (message and transaction ids come from the same counter, so carry on past the saved ones)
+      for (const x of [...get().messages, ...get().txs]) uid = Math.max(uid, x.id + 1);
+      get().syncWeather();
+    },
+
     restart: () => {
+      clearSave();
       set({ ...freshGame(), phase: "title" });
       get().syncWeather();
     },
@@ -632,6 +657,23 @@ export function objectiveTarget(s: ObjectiveState): { x: number; z: number; labe
   }
   return null;
 }
+
+// Autosave: as soon as a life starts or resumes, then every few seconds while playing, and when the tab is hidden or closed.
+// Getting evicted ends that life, so its save goes too.
+let saveTimer: ReturnType<typeof setTimeout> | undefined;
+const saveNow = () => {
+  clearTimeout(saveTimer);
+  saveTimer = undefined;
+  const s = useGame.getState();
+  if (s.phase === "playing") writeSave(s);
+};
+useGame.subscribe((s, prev) => {
+  if (s.phase === "gameover" && prev.phase !== "gameover") clearSave();
+  else if (s.phase === "playing" && prev.phase !== "playing") saveNow();
+  else if (s.phase === "playing" && !saveTimer) saveTimer = setTimeout(saveNow, 3000);
+});
+addEventListener("pagehide", saveNow);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") saveNow(); });
 
 // Dev-only handle for debugging and automated screenshots.
 if (import.meta.env.DEV) (window as unknown as { __store: typeof useGame }).__store = useGame;

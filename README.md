@@ -18,6 +18,7 @@ People who like life sims such as The Sims, Gameloft's *Miami Nights* / *My Life
 - **Meet people:** 12 locals with their own personalities. Chat, banter, invite them for a pint, flirt.
 - **Travel by Tube** between four districts on a Tube-style map: Albion Park (E2, home), the City (EC2), Soho (W1) and Camden (NW1). Fares, journey times and a night bus after 00:30.
 - **Use your phone:** messages, jobs, banking, maps, contacts and settings.
+- **Pick up where you left off:** your life saves automatically in your browser, and Continue on the title screen takes you back. Saves never leave your device.
 
 | Character creator | Tube map |
 |---|---|
@@ -74,7 +75,7 @@ src/
 
 ## Status
 
-This is an early prototype. It's single-player, it doesn't save yet, and it hasn't been tested on a real phone. See [ROADMAP.md](ROADMAP.md) for what's next and the known issues.
+This is an early prototype. It's single-player, and it hasn't been tested on a real phone. See [ROADMAP.md](ROADMAP.md) for what's next and the known issues.
 
 ## How it was made
 
