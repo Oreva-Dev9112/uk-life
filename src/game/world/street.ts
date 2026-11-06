@@ -940,10 +940,11 @@ export function disposeTree(root: THREE.Object3D, materials = true) {
   root.removeFromParent();
   root.traverse((o) => {
     const m = o as THREE.Mesh;
-    if (m.geometry) m.geometry.dispose();
+    if (m.geometry && !m.geometry.userData.shared) m.geometry.dispose();
     if (!materials && !(o instanceof THREE.Sprite)) return;
     const mats = m.material ? ([] as THREE.Material[]).concat(m.material) : [];
     for (const mt of mats) {
+      if (mt.userData.shared) continue;
       const st = mt as THREE.MeshStandardMaterial;
       for (const tex of [st.map, st.normalMap, st.roughnessMap, st.emissiveMap]) if (tex && !tex.userData.shared) tex.dispose();
       mt.dispose();

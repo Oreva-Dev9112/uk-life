@@ -49,6 +49,7 @@ const BUILD: Record<Gender, { height: number; shoulder: number; torsoX: number; 
 };
 
 export const charMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.66, metalness: 0 });
+charMat.userData.shared = true; // (every character uses it, so a district's clean-up must leave it)
 const umbrellaMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.35, side: THREE.DoubleSide });
 
 /** Hair (or a cap) as parts for bake(), around a head of radius ~0.13 centred at the origin and facing +z. */

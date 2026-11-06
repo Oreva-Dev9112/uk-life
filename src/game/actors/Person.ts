@@ -128,7 +128,11 @@ function makeOutfit(scene: THREE.Object3D, body: Body): Outfit {
     return g;
   });
   first.geometry = mergeGeometries(geometries)!;
+  first.geometry.userData.shared = true; // (everyone in this outfit uses it, so a district's clean-up must leave it)
   first.name = "Person";
+  // Bounds for skipping off-screen people: the rest pose, with room for swinging arms and legs.
+  first.computeBoundingSphere();
+  first.boundingSphere!.radius *= 1.3;
   for (const { mesh } of keep) if (mesh !== first) mesh.removeFromParent();
   for (const m of parts) if (!keep.some((k) => k.mesh === m)) m.removeFromParent();
 
@@ -204,7 +208,6 @@ export class Person {
     this.material = personMaterial(paletteFor(this.look));
     mesh.material = this.material;
     mesh.castShadow = true;
-    mesh.frustumCulled = false; // (its bounds are the rest pose, not the animated one)
 
     // Scalp and hair: placed on the head in the rest pose, then carried by the head bone.
     const onHead: THREE.Mesh[] = [];

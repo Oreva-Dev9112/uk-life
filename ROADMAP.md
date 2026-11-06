@@ -14,7 +14,12 @@ Planned work, roughly in order. Hours are estimates.
 
 - [ ] **Districts that look different from each other** (~4 h). All four districts currently share one street layout, so the same phone box and bus stop appear everywhere. Give each its own street furniture and layout.
 - [ ] **Go inside your flat** (~8 h). A small interior you can walk around and later decorate.
-- [ ] **Better characters** (~6 h left). Your own character now uses Quaternius's CC0 models with outfits and animations. Next: the locals and passers-by, dressed for their district, then a speed check on phones.
+- [x] **Better characters**. You, the 12 locals and the passers-by use Quaternius's CC0 models with outfits and animations, dressed for their district.
+- [ ] **Better cars** (~3 h). Swap the box-built cars for CC0 models (Kenney's Car Kit), with a proper black cab and red bus.
+- [ ] **Better buildings** (~12 h). Terraces and shopfronts with real depth: window frames, sills, cornices, chimneys and rooftops, possibly built from Kenney's CC0 Building Kit.
+- [ ] **Greenery and street props** (~3 h). Trees, planters, flowers, benches and bins, so the streets aren't bare.
+- [ ] **Restyle the menus** (~5 h). Shop panels, conversations and the phone in the same style as the new HUD.
+- [ ] **Pick a finish for the camera** (~2 h). An isometric view, optionally with a pixel-art filter (tried out locally; not decided yet).
 - [ ] **Sound** (~3 h). Ambience and music that change by district and time of day.
 - [ ] **Snow** (~2 h). The real forecast sometimes says snow; for now it falls as drizzle.
 - [ ] **Cache the weather** (~1 h). Open-Meteo's free tier allows fewer than 10,000 calls a day per app. One call per visit is fine for now, but if the game gets busy the forecast should come through a cached Vercel function, so it's a few calls an hour however many people play.
@@ -32,7 +37,7 @@ Planned work, roughly in order. Hours are estimates.
 ## Known issues
 
 - Single-player only. Saves live in one browser, so they don't follow you to another device.
-- The locals, passers-by and vehicles are still simple placeholder shapes.
+- Vehicles and buildings are still built from simple shapes.
 - Tested in desktop Chrome and an emulated phone, not on real phones or in Safari.
 - Sound has not been checked by ear.
 - Day 1 is always a Monday, even though the time and weather follow the real date.

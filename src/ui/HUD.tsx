@@ -99,10 +99,11 @@ function NeedBar({ k, v }: { k: NeedKey; v: number }) {
 }
 
 // Your face from your character model (drawn once it has loaded).
-function usePersonPortrait(look: Look) {
+function usePersonPortrait(look: Look | null) {
   const key = JSON.stringify(look);
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
+    if (!look) return;
     let live = true;
     personPortrait(look).then((u) => live && setUrl(u), () => live && setUrl(portrait(look)));
     return () => { live = false; };
@@ -173,8 +174,9 @@ export function InteractPrompt({ touch }: { touch: boolean }) {
   const interact = useGame((s) => s.interact);
   const rel = useGame((s) => (s.nearby?.kind === "npc" ? s.rel[s.nearby.id] ?? 0 : 0));
   const met = useGame((s) => (s.nearby?.kind === "npc" ? !!s.met[s.nearby.id] : false));
+  const npc = nearby?.kind === "npc" ? npcById(nearby.id) : null;
+  const face = usePersonPortrait(npc ? npc.look : null);
   if (!nearby || panel || phoneOpen) return null;
-  const npc = nearby.kind === "npc" ? npcById(nearby.id) : null;
   return (
     // Desktop: above the mood plate until the screen is wide enough to sit beside it.
     <div className={`pointer-events-none absolute inset-x-0 flex justify-center px-4 ${touch ? "bottom-40" : "bottom-24 lg:bottom-6"}`}>
@@ -184,7 +186,7 @@ export function InteractPrompt({ touch }: { touch: boolean }) {
       >
         {npc ? (
           <span className="h-12 w-12 shrink-0 overflow-hidden rounded-xl border-2 border-white/85 bg-gradient-to-b from-amber-200 to-orange-500">
-            <img src={portrait(npc.look)} alt="" className="h-full w-full object-cover" />
+            {face && <img src={face} alt="" className="h-full w-full object-cover" />}
           </span>
         ) : (
           <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white/10"><Icon name="walk" size={22} /></span>

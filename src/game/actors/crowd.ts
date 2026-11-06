@@ -1,7 +1,8 @@
 // Named locals you can talk to, plus generic pedestrians walking the pavements.
 import * as THREE from "three";
-import { Character, type Look } from "./Character";
-import { NPCS, type AreaId, type NpcDef } from "../../state/content";
+import type { Look } from "./Character";
+import { Person } from "./Person";
+import { NPCS, bodyOf, type AreaId, type NpcDef } from "../../state/content";
 import { groundY } from "../world/layout";
 import { bubbleTexture, textLabelTexture } from "../world/textures";
 
@@ -25,11 +26,17 @@ const COATS = ["#1f2937", "#111111", "#3f2d20", "#334155", "#5b2333", "#2f4f3f",
 const TROUSERS = ["#1f2430", "#22252c", "#2b3442", "#3a3a3a", "#14213d", "#4a3f35"];
 const UMBRELLAS = ["#111111", "#1e3a8a", "#7f1d1d", "#14532d", "#f59e0b", "#6b21a8", "#e5e7eb", "#111111"];
 const STYLES: Look["hairStyle"][] = ["short", "short", "long", "bun", "afro", "bald", "cap"];
-const GENDERS: Look["gender"][] = ["male", "male", "female", "female", "female", "male", "nonbinary"];
+// What passers-by wear in each district (repeats make an outfit more common).
+const STREET_STYLE: Record<AreaId, string[]> = {
+  albion: ["male-casual", "male-casual", "male-hoodie", "male-worker", "male-backpacker", "female-casual", "female-casual", "female-dress", "female-worker", "female-shorts"],
+  city: ["male-suit", "male-suit", "male-suit", "female-suit", "female-suit", "male-casual", "female-casual", "male-worker"],
+  soho: ["male-casual", "male-hoodie", "male-suit", "male-punk", "female-dress", "female-dress", "female-casual", "female-punk", "female-suit"],
+  camden: ["male-punk", "male-punk", "male-hoodie", "male-backpacker", "male-summer", "female-punk", "female-punk", "female-shorts", "female-casual"],
+};
 const pick = <T,>(a: T[]) => a[Math.floor(Math.random() * a.length)];
 
 export class Npc {
-  char: Character;
+  char: Person;
   pos = new THREE.Vector3();
   target = new THREE.Vector3();
   wait = 0;
@@ -41,7 +48,8 @@ export class Npc {
   bubble?: THREE.Sprite;
 
   constructor(public def: NpcDef | null, look: Look) {
-    this.char = new Character({ ...look, umbrella: pick(UMBRELLAS) }, def ? 1 : 0.94 + Math.random() * 0.1);
+    this.char = new Person({ ...look, umbrella: pick(UMBRELLAS) });
+    if (!def) this.char.root.scale.setScalar(0.94 + Math.random() * 0.1);
     this.speed = def ? 1.1 : 1.15 + Math.random() * 0.5;
     if (def) {
       // (sized to read from the overhead camera)
@@ -74,7 +82,8 @@ export class Crowd {
       this.add(n);
     }
     for (let i = 0; i < pedestrians; i++) {
-      const look: Look = { skin: pick(SKINS), hair: pick(HAIRS), jacket: pick(COATS), trousers: pick(TROUSERS), hairStyle: pick(STYLES), gender: pick(GENDERS) };
+      const outfit = pick(STREET_STYLE[area]);
+      const look: Look = { skin: pick(SKINS), hair: pick(HAIRS), jacket: pick(COATS), trousers: pick(TROUSERS), hairStyle: pick(STYLES), gender: bodyOf(outfit), outfit };
       const n = new Npc(null, look);
       const north = Math.random() < 0.5;
       n.lane = north ? 8.2 + Math.random() * 0.8 : -(7.7 + Math.random() * 0.3);

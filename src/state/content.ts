@@ -398,7 +398,7 @@ export interface NpcDef {
   age: number;
   role: string;
   intro: string;
-  look: { skin: string; hair: string; jacket: string; trousers: string; hairStyle: HairStyle; gender: Gender };
+  look: { skin: string; hair: string; jacket: string; trousers: string; hairStyle: HairStyle; gender: Gender; outfit: string };
   anchor: [number, number]; // where they hang out
   likes: Record<"weather" | "banter" | "flirt", number>; // -1..1
   workTip: string;
@@ -428,84 +428,84 @@ export const NPCS: NpcDef[] = [
   {
     id: "priya", area: "albion", name: "Priya", age: 26, role: "A&E nurse",
     intro: "Priya. I'm a nurse at the Royal London, so if I look dead inside, that's why.",
-    look: { skin: "#a8724f", hair: "#1c1410", jacket: "#2f4f6f", trousers: "#1f2430", hairStyle: "long", gender: "female" },
+    look: { skin: "#a8724f", hair: "#1c1410", jacket: "#2f4f6f", trousers: "#1f2430", hairStyle: "long", gender: "female", outfit: "female-casual" },
     anchor: [-17, 7.6], likes: { weather: 0.8, banter: -0.2, flirt: 0.2 },
     workTip: "Crumbs is always hiring. They go through baristas like sausage rolls.",
   },
   {
     id: "tunde", area: "albion", name: "Tunde", age: 24, role: "Music producer",
     intro: "Tunde. I make beats. And fix phones. Mostly fix phones.",
-    look: { skin: "#5a3a26", hair: "#0e0b09", jacket: "#c2410c", trousers: "#2a2a2a", hairStyle: "afro", gender: "male" },
+    look: { skin: "#5a3a26", hair: "#0e0b09", jacket: "#c2410c", trousers: "#2a2a2a", hairStyle: "afro", gender: "male", outfit: "male-hoodie" },
     anchor: [-31, -7.4], likes: { weather: -0.3, banter: 0.9, flirt: 0.1 },
     workTip: "Codfather needs a fryer. You'll stink, but Uncle Sal pays on time.",
   },
   {
     id: "gaz", area: "albion", name: "Gaz", age: 52, role: "Ex-cabbie, pub regular",
     intro: "Gaz. Drove a cab for thirty years. Know every road in London, me.",
-    look: { skin: "#e0b49a", hair: "#9a9a9a", jacket: "#3b3b2f", trousers: "#2b3442", hairStyle: "bald", gender: "male" },
+    look: { skin: "#e0b49a", hair: "#9a9a9a", jacket: "#3b3b2f", trousers: "#2b3442", hairStyle: "bald", gender: "male", outfit: "male-casual" },
     anchor: [25, 7.8], likes: { weather: 0.9, banter: 0.7, flirt: -0.8 },
     workTip: "The Rose & Crown's after bar staff. Tell 'em Gaz sent you. Actually, don't.",
   },
   {
     id: "chloe", area: "albion", name: "Chloe", age: 21, role: "Art student",
     intro: "Chloe. Art student. My dissertation is about launderettes, don't ask.",
-    look: { skin: "#f1c9ad", hair: "#b5532a", jacket: "#5b7a3a", trousers: "#262b3d", hairStyle: "bun", gender: "female" },
+    look: { skin: "#f1c9ad", hair: "#b5532a", jacket: "#5b7a3a", trousers: "#262b3d", hairStyle: "bun", gender: "female", outfit: "female-dress" },
     anchor: [37, -7.5], likes: { weather: -0.4, banter: 0.4, flirt: 0.6 },
     workTip: "NoshRun riders make bank when it rains. So, always.",
   },
   {
     id: "mo", area: "albion", name: "Mo", age: 33, role: "Runs Kwik Mart",
     intro: "Mo. This is my shop. Open twenty-four hours. I have not slept since 2019.",
-    look: { skin: "#8d5a3b", hair: "#120d0a", jacket: "#14532d", trousers: "#1f2937", hairStyle: "short", gender: "male" },
+    look: { skin: "#8d5a3b", hair: "#120d0a", jacket: "#14532d", trousers: "#1f2937", hairStyle: "short", gender: "male", outfit: "male-casual" },
     anchor: [5, -8.2], likes: { weather: 0.5, banter: 0.5, flirt: -0.5 },
     workTip: "Job Centre up the road, past the pub. Go early, the queue is biblical.",
   },
   {
     id: "siobhan", area: "albion", name: "Siobhan", age: 34, role: "Personal trainer",
     intro: "Siobhan. PT at PureFlex. You look like you skip leg day.",
-    look: { skin: "#f3d2c1", hair: "#d8b25a", jacket: "#be185d", trousers: "#111827", hairStyle: "long", gender: "female" },
+    look: { skin: "#f3d2c1", hair: "#d8b25a", jacket: "#be185d", trousers: "#111827", hairStyle: "long", gender: "female", outfit: "female-shorts" },
     anchor: [68, -7.6], likes: { weather: 0.1, banter: 0.8, flirt: 0.3 },
     workTip: "Gym's not hiring, but NoshRun is. Free cardio.",
   },
   {
     id: "marcus", area: "city", name: "Marcus", age: 31, role: "Investment banker",
     intro: "Marcus. I'm in finance. No, I can't explain what I do either.",
-    look: { skin: "#e0b49a", hair: "#3b2416", jacket: "#1f2937", trousers: "#1f2937", hairStyle: "short", gender: "male" },
+    look: { skin: "#e0b49a", hair: "#3b2416", jacket: "#1f2937", trousers: "#1f2937", hairStyle: "short", gender: "male", outfit: "male-suit" },
     anchor: [-14, 7.6], likes: { weather: 0.2, banter: 0.6, flirt: 0.1 },
     workTip: "Crowne & Mills hire juniors, but turn up in a suit. Hartley & Sons, over the road.",
   },
   {
     id: "ingrid", area: "city", name: "Ingrid", age: 44, role: "HR director",
     intro: "Ingrid, HR. I've seen your type. Mostly in disciplinaries.",
-    look: { skin: "#f3d2c1", hair: "#c9a15a", jacket: "#5b2333", trousers: "#111827", hairStyle: "bun", gender: "female" },
+    look: { skin: "#f3d2c1", hair: "#c9a15a", jacket: "#5b2333", trousers: "#111827", hairStyle: "bun", gender: "female", outfit: "female-suit" },
     anchor: [29, 7.8], likes: { weather: 0.6, banter: -0.1, flirt: -0.5 },
     workTip: "We look for three things: experience, a suit, and not crying in the lift.",
   },
   {
     id: "jules", area: "soho", name: "Jules", age: 27, role: "Club promoter",
     intro: "Jules. I run the door at Zenith. You're not on the list. Yet.",
-    look: { skin: "#8d5a3b", hair: "#120d0a", jacket: "#6b21a8", trousers: "#111111", hairStyle: "cap", gender: "nonbinary" },
+    look: { skin: "#8d5a3b", hair: "#120d0a", jacket: "#6b21a8", trousers: "#111111", hairStyle: "cap", gender: "nonbinary", outfit: "male-hoodie" },
     anchor: [-34, 7.6], likes: { weather: -0.4, banter: 0.9, flirt: 0.5 },
     workTip: "Zenith always needs promoters. Pay's alright, nights are long.",
   },
   {
     id: "mei", area: "soho", name: "Mei", age: 29, role: "Chef at Dragon Gate",
     intro: "Mei. I make the noodles. By hand. Every single one.",
-    look: { skin: "#f1d1b5", hair: "#0e0b09", jacket: "#f3f4f6", trousers: "#1f2937", hairStyle: "bun", gender: "female" },
+    look: { skin: "#f1d1b5", hair: "#0e0b09", jacket: "#f3f4f6", trousers: "#1f2937", hairStyle: "bun", gender: "female", outfit: "female-casual" },
     anchor: [-6, -7.6], likes: { weather: 0.2, banter: 0.5, flirt: 0.2 },
     workTip: "We need a waiter for the evening shift. Fast feet, good memory.",
   },
   {
     id: "rafa", area: "camden", name: "Rafa", age: 23, role: "Busker",
     intro: "Rafa. Guitar, voice, questionable hat. Tips appreciated.",
-    look: { skin: "#c68a63", hair: "#3b2416", jacket: "#7c2d12", trousers: "#1f2a44", hairStyle: "long", gender: "male" },
+    look: { skin: "#c68a63", hair: "#3b2416", jacket: "#7c2d12", trousers: "#1f2a44", hairStyle: "long", gender: "male", outfit: "male-backpacker" },
     anchor: [-14, 7.4], likes: { weather: -0.2, banter: 0.7, flirt: 0.4 },
     workTip: "The market always needs hands on a Saturday. And a Tuesday. Always.",
   },
   {
     id: "nia", area: "camden", name: "Nia", age: 35, role: "Runs a vintage stall",
     intro: "Nia. That jacket? Mine. Everything here is mine. It's a stall.",
-    look: { skin: "#5a3a26", hair: "#0e0b09", jacket: "#14532d", trousers: "#4a3f35", hairStyle: "afro", gender: "female" },
+    look: { skin: "#5a3a26", hair: "#0e0b09", jacket: "#14532d", trousers: "#4a3f35", hairStyle: "afro", gender: "female", outfit: "female-dress" },
     anchor: [-30, 8.8], likes: { weather: 0.4, banter: 0.6, flirt: 0.1 },
     workTip: "Ask at the market. Ten till six. Bring a jumper, it's always cold.",
   },
