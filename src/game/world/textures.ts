@@ -538,6 +538,40 @@ export function tileTexture(color: string, grout: string, size = 16) {
   return toTexture(c);
 }
 
+const HEART = "M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z";
+
+/** A round speech bubble with a tail: "!" for someone new, "…" for a chat, or a heart. */
+export function bubbleTexture(kind: "new" | "chat" | "heart") {
+  const S = 128;
+  const [c, ctx] = makeCanvas(S, S);
+  ctx.beginPath();
+  ctx.arc(64, 56, 44, Math.PI * 0.62, Math.PI * 2.38); // all the way round except a gap at the bottom...
+  ctx.lineTo(64, 122); // ...where the tail points down
+  ctx.closePath();
+  ctx.fillStyle = kind === "new" ? "#ffd23f" : "#ffffff";
+  ctx.fill();
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = "#16203f";
+  ctx.stroke();
+  ctx.fillStyle = "#16203f";
+  if (kind === "new") {
+    ctx.font = "900 70px 'Space Grotesk', Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("!", 64, 60);
+  } else if (kind === "chat") {
+    for (const x of [44, 64, 84]) { ctx.beginPath(); ctx.arc(x, 57, 7.5, 0, Math.PI * 2); ctx.fill(); }
+  } else {
+    ctx.save();
+    ctx.translate(30, 22);
+    ctx.scale(2.85, 2.85);
+    ctx.fillStyle = "#ec4899";
+    ctx.fill(new Path2D(HEART));
+    ctx.restore();
+  }
+  return toTexture(c, true, false);
+}
+
 export function textLabelTexture(text: string, color = "#ffffff") {
   const W = 512, H = 128;
   const [c, ctx] = makeCanvas(W, H);

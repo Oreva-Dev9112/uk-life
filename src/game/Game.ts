@@ -390,6 +390,7 @@ export class Game {
     const talkingTo = s.panel?.kind === "npc" ? s.panel.id : null;
     const raining = this.rainVis > 0.2;
     this.traffic.update(dt, playing ? this.player.pos : { x: 9999, z: 0 }, night, this.camera.position.x);
+    this.crowd.people = { met: s.met, rel: s.rel, near: s.nearby?.kind === "npc" ? s.nearby.id : null };
     this.crowd.update(dt, playing ? this.player.pos : new THREE.Vector3(9999, 0, 0), talkingTo, raining, hour, this.camera.position, creating ? { x: focus.x, z: focus.z, r: 11 } : undefined);
     const fl = this.rig.creator.focus;
     this.keyLight.position.set(fl.x - 2.6, 2.4, fl.z - 1.6);

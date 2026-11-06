@@ -3,7 +3,21 @@ import * as THREE from "three";
 import { Character, type Look } from "./Character";
 import { NPCS, type AreaId, type NpcDef } from "../../state/content";
 import { groundY } from "../world/layout";
-import { textLabelTexture } from "../world/textures";
+import { bubbleTexture, textLabelTexture } from "../world/textures";
+
+// Bubbles over the locals: "!" for someone you haven't met, a chat bubble over whoever you're next to,
+// and a heart over your best mates.
+type Bubble = "new" | "chat" | "heart";
+const bubbleMaps = new Map<Bubble, THREE.Texture>();
+function bubbleMap(kind: Bubble) {
+  let t = bubbleMaps.get(kind);
+  if (!t) {
+    t = bubbleTexture(kind);
+    t.userData.shared = true; // (drawn once and kept when a district is torn down)
+    bubbleMaps.set(kind, t);
+  }
+  return t;
+}
 
 const SKINS = ["#f1c9ad", "#e0b49a", "#c68a63", "#a8724f", "#8d5a3b", "#5a3a26", "#3d2618"];
 const HAIRS = ["#0e0b09", "#20160f", "#4a2f1d", "#8a5a33", "#c9a15a", "#9a9a9a", "#b5532a"];
@@ -24,16 +38,23 @@ export class Npc {
   lane = 0;
   facing = 0;
   label?: THREE.Sprite;
+  bubble?: THREE.Sprite;
 
   constructor(public def: NpcDef | null, look: Look) {
     this.char = new Character({ ...look, umbrella: pick(UMBRELLAS) }, def ? 1 : 0.94 + Math.random() * 0.1);
     this.speed = def ? 1.1 : 1.15 + Math.random() * 0.5;
     if (def) {
+      // (sized to read from the overhead camera)
       this.label = new THREE.Sprite(new THREE.SpriteMaterial({ map: textLabelTexture(def.name), depthWrite: false, transparent: true }));
-      this.label.scale.set(1.5, 0.375, 1);
-      this.label.position.y = 2.2;
+      this.label.scale.set(2.2, 0.55, 1);
+      this.label.position.y = 2.25;
       this.label.renderOrder = 10;
       this.char.root.add(this.label);
+      // (drawn over everything, so a tree can't hide who wants a word)
+      this.bubble = new THREE.Sprite(new THREE.SpriteMaterial({ map: bubbleMap("new"), depthWrite: false, depthTest: false, transparent: true }));
+      this.bubble.scale.setScalar(0.7);
+      this.bubble.renderOrder = 11;
+      this.char.root.add(this.bubble);
     }
   }
 }
@@ -41,6 +62,8 @@ export class Npc {
 export class Crowd {
   npcs: Npc[] = [];
   group = new THREE.Group();
+  people: { met: Record<string, boolean>; rel: Record<string, number>; near: string | null } = { met: {}, rel: {}, near: null };
+  private t = 0;
 
   constructor(pedestrians: number, area: AreaId = "albion") {
     for (const def of NPCS.filter((n) => n.area === area)) {
@@ -71,6 +94,7 @@ export class Crowd {
   }
 
   update(dt: number, player: THREE.Vector3, talkingTo: string | null, rain: boolean, hour: number, view: THREE.Vector3, clear?: { x: number; z: number; r: number }) {
+    this.t += dt;
     for (const n of this.npcs) {
       let moving = false;
       // keep the character-creator stage free of passers-by
@@ -101,10 +125,16 @@ export class Crowd {
             moving = true;
           }
         }
-        if (n.label) {
-          const show = toPlayer < 10;
-          n.label.visible = show;
-          (n.label.material as THREE.SpriteMaterial).opacity = THREE.MathUtils.clamp((10 - toPlayer) / 3, 0, 1);
+        if (n.label && n.bubble) {
+          // names only once you've met; until then, a "!"
+          const met = !!this.people.met[n.def.id];
+          const fade = THREE.MathUtils.clamp((16 - toPlayer) / 4, 0, 1);
+          const bubble: Bubble | null = !met ? "new" : this.people.near === n.def.id ? "chat" : (this.people.rel[n.def.id] ?? 0) >= 80 ? "heart" : null;
+          n.label.visible = met && fade > 0;
+          (n.label.material as THREE.SpriteMaterial).opacity = fade;
+          n.bubble.visible = !!bubble && fade > 0;
+          if (bubble) (n.bubble.material as THREE.SpriteMaterial).map = bubbleMap(bubble);
+          n.bubble.position.y = (met ? 2.85 : 2.45) + Math.sin(this.t * 3 + n.pos.x) * 0.05;
         }
       } else {
         // pedestrians stroll up and down; fewer about at night
