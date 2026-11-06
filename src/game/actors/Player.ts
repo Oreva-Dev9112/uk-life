@@ -1,6 +1,7 @@
 // The player: movement relative to the camera, collision against the street, tap-to-walk.
 import * as THREE from "three";
-import { Character, type Look } from "./Character";
+import type { Look } from "./Character";
+import { Person } from "./Person";
 import { dampAngle } from "./crowd";
 import { FACADE, PLAY_X, groundY, type AABB } from "../world/layout";
 import { input, moveAxes } from "../systems/input";
@@ -8,18 +9,18 @@ import { input, moveAxes } from "../systems/input";
 const RADIUS = 0.3;
 
 export class Player {
-  char: Character;
+  char: Person;
   pos = new THREE.Vector3();
   facing = 0;
   speed = 0;
 
   constructor(look: Look) {
-    this.char = new Character({ ...look, umbrella: "#c8102e" });
+    this.char = new Person({ ...look, umbrella: "#c8102e" });
   }
 
   setLook(look: Look, scene: THREE.Object3D) {
     this.char.dispose();
-    this.char = new Character({ ...look, umbrella: "#c8102e" });
+    this.char = new Person({ ...look, umbrella: "#c8102e" });
     scene.add(this.char.root);
   }
 

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGame, fmtMoney, fmtTime, weekdayOf, dayOf, hourOf, mood, realTimeAt, rentOwedWeeks, WEATHER_LABEL, objectiveTarget } from "../state/store";
 import { AREAS, NEED_INFO, NEED_KEYS, JOBS, WEEKLY_RENT, npcById, relationshipTier, type NeedKey } from "../state/content";
 import { londonDaylightAt } from "../state/london";
-import { portrait } from "../game/portraits";
+import { personPortrait, portrait } from "../game/portraits";
+import type { Look } from "../game/actors/Character";
 import { Icon } from "./Icon";
 import { audio } from "../game/systems/audio";
 
@@ -97,6 +98,18 @@ function NeedBar({ k, v }: { k: NeedKey; v: number }) {
   );
 }
 
+// Your face from your character model (drawn once it has loaded).
+function usePersonPortrait(look: Look) {
+  const key = JSON.stringify(look);
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    let live = true;
+    personPortrait(look).then((u) => live && setUrl(u), () => live && setUrl(portrait(look)));
+    return () => { live = false; };
+  }, [key]); // (look is a fresh object each time; key says when it really changed)
+  return url;
+}
+
 const MOODS = [
   { min: 80, word: "Buzzing", from: "#34d399", to: "#047857" },
   { min: 65, word: "Happy", from: "#4ade80", to: "#15803d" },
@@ -112,6 +125,7 @@ export function Mood({ touch }: { touch: boolean }) {
   const look = useGame((s) => s.profile.look);
   const name = useGame((s) => s.profile.name);
   const [open, setOpen] = useState(false);
+  const face = usePersonPortrait(look);
   const m = mood(needs);
   const tier = MOODS.find((t) => m >= t.min)!;
   const low = NEED_KEYS.filter((k) => needs[k] < 25);
@@ -119,7 +133,7 @@ export function Mood({ touch }: { touch: boolean }) {
     <div className={`pointer-events-none absolute left-3 flex gap-2 sm:left-4 ${touch ? "top-[calc(3.4rem_+_env(safe-area-inset-top))] flex-col" : "bottom-4 flex-col-reverse"}`}>
       <button onClick={() => setOpen((o) => !o)} className="pointer-events-auto flex items-end gap-2 text-left" aria-label="Show your needs" aria-expanded={open}>
         <span className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border-2 border-white/85 bg-gradient-to-b from-sky-300 to-indigo-600 shadow-lg">
-          <img src={portrait(look)} alt="" className="h-full w-full object-cover" />
+          {face && <img src={face} alt="" className="h-full w-full object-cover" />}
         </span>
         <span className="plate block w-44 rounded-xl px-2 pb-1.5 pt-1 sm:w-52">
           <span className="flex items-center justify-between gap-2">

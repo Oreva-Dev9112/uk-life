@@ -13,6 +13,7 @@ export interface Look {
   gender: Gender;
   shoes?: string;
   umbrella?: string;
+  outfit?: string; // (used by Person; the shape-built Character ignores it)
 }
 
 const geo = {
@@ -47,8 +48,31 @@ const BUILD: Record<Gender, { height: number; shoulder: number; torsoX: number; 
   nonbinary: { height: 0.97, shoulder: 0.235, torsoX: 0.98, torsoZ: 0.74, hipsX: 1.12, hipsZ: 1.05, arm: 0.92, legX: 0.098 },
 };
 
-const charMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.66, metalness: 0 });
+export const charMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.66, metalness: 0 });
 const umbrellaMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.35, side: THREE.DoubleSide });
+
+/** Hair (or a cap) as parts for bake(), around a head of radius ~0.13 centred at the origin and facing +z. */
+export function hairParts(L: Look): Part[] {
+  const style = L.hairStyle, hair = L.hair;
+  if (style === "bald") return [];
+  if (style === "afro") return [{ geo: geo.afro, color: hair, pos: [0, 0.035, -0.04] }, { geo: geo.afroBack, color: hair, pos: [0, -0.01, -0.085] }];
+  const capColor = L.jacket === "#111111" ? "#c8102e" : "#111111";
+  const parts: Part[] = [{ geo: geo.hairCap, color: style === "cap" ? capColor : hair, pos: [0, 0.012, -0.008], rot: [-0.18, 0, 0] }];
+  if (style === "long") parts.push({ geo: geo.hairLong, color: hair, pos: [0, -0.12, -0.07], scale: [1.15, 1, 0.6] });
+  if (style === "bun") parts.push({ geo: geo.bun, color: hair, pos: [0, 0.12, -0.1] });
+  if (style === "cap") parts.push({ geo: geo.capBrim, color: "#111111", pos: [0, 0.05, 0.095] }); // half-disc already faces +z (front)
+  return parts;
+}
+
+/** An umbrella with its handle at the origin. */
+export function makeUmbrella(color = "#1b1b1f") {
+  const mesh = new THREE.Mesh(bake([
+    { geo: geo.canopy, color, pos: [0, 0.48, 0] },
+    { geo: geo.shaft, color: "#222222", pos: [0, 0.02, 0] },
+  ]), umbrellaMat);
+  mesh.castShadow = true;
+  return mesh;
+}
 
 export class Character {
   root = new THREE.Group();
@@ -118,22 +142,10 @@ export class Character {
         { geo: geo.brow, color: hair, pos: [sx * 0.046, 0.034, 0.121], rot: [0, 0, -sx * 0.12] },
       );
     }
-    const style = L.hairStyle;
-    if (style === "afro") {
-      parts.push({ geo: geo.afro, color: hair, pos: [0, 0.035, -0.04] }, { geo: geo.afroBack, color: hair, pos: [0, -0.01, -0.085] });
-    } else if (style !== "bald") {
-      const capColor = L.jacket === "#111111" ? "#c8102e" : "#111111";
-      parts.push({ geo: geo.hairCap, color: style === "cap" ? capColor : hair, pos: [0, 0.012, -0.008], rot: [-0.18, 0, 0] });
-      if (style === "long") parts.push({ geo: geo.hairLong, color: hair, pos: [0, -0.12, -0.07], scale: [1.15, 1, 0.6] });
-      if (style === "bun") parts.push({ geo: geo.bun, color: hair, pos: [0, 0.12, -0.1] });
-      if (style === "cap") parts.push({ geo: geo.capBrim, color: "#111111", pos: [0, 0.05, 0.095] }); // half-disc already faces +z (front)
-    }
+    parts.push(...hairParts(L));
     this.mk(parts, this.head);
     // umbrella, held in the right hand
-    this.mk([
-      { geo: geo.canopy, color: L.umbrella ?? "#1b1b1f", pos: [0, 0.48, 0] },
-      { geo: geo.shaft, color: "#222222", pos: [0, 0.02, 0] },
-    ], this.umbrella, umbrellaMat);
+    this.umbrella.add(makeUmbrella(L.umbrella));
     this.umbrella.position.set(0.13, 1.5, 0.34);
     this.umbrella.rotation.x = -0.18;
     this.umbrella.visible = false;

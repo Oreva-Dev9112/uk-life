@@ -14,7 +14,7 @@ Planned work, roughly in order. Hours are estimates.
 
 - [ ] **Districts that look different from each other** (~4 h). All four districts currently share one street layout, so the same phone box and bus stop appear everywhere. Give each its own street furniture and layout.
 - [ ] **Go inside your flat** (~8 h). A small interior you can walk around and later decorate.
-- [ ] **Better characters** (~8 h). Replace the shape-built people with proper models and animations under an open licence (for example CC0).
+- [ ] **Better characters** (~6 h left). Your own character now uses Quaternius's CC0 models with outfits and animations. Next: the locals and passers-by, dressed for their district, then a speed check on phones.
 - [ ] **Sound** (~3 h). Ambience and music that change by district and time of day.
 - [ ] **Snow** (~2 h). The real forecast sometimes says snow; for now it falls as drizzle.
 - [ ] **Cache the weather** (~1 h). Open-Meteo's free tier allows fewer than 10,000 calls a day per app. One call per visit is fine for now, but if the game gets busy the forecast should come through a cached Vercel function, so it's a few calls an hour however many people play.
@@ -32,7 +32,7 @@ Planned work, roughly in order. Hours are estimates.
 ## Known issues
 
 - Single-player only. Saves live in one browser, so they don't follow you to another device.
-- Characters and vehicles are simple placeholder shapes.
+- The locals, passers-by and vehicles are still simple placeholder shapes.
 - Tested in desktop Chrome and an emulated phone, not on real phones or in Safari.
 - Sound has not been checked by ear.
 - Day 1 is always a Monday, even though the time and weather follow the real date.

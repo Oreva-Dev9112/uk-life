@@ -20,6 +20,7 @@ import { useGame, hourOf, objectiveTarget, realTimeAt } from "../state/store";
 import { londonDaylightAt } from "../state/london";
 import { npcById, placesIn, type AreaId, type Place } from "../state/content";
 import { seeThroughUniforms } from "./world/seeThrough";
+import { preloadPeople } from "./actors/Person";
 
 const STAGE_FACING = -Math.PI / 2 - 0.35; // the creator preview faces down the pavement, slightly towards the road
 const GAME_MINUTES_PER_SECOND = 1;
@@ -109,6 +110,7 @@ export class Game {
     // world
     this.rain = createRain(quality === "high" ? 9000 : 4500);
     this.scene.add(this.rain.group);
+    preloadPeople(["male-casual", "female-casual", "male-hoodie"]); // (the creator's starting outfits)
     this.player = new Player(useGame.getState().profile.look);
     this.player.char.root.visible = false;
     this.scene.add(this.player.char.root);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGame, dayOf, fmtMoney, fmtTime, WEATHER_LABEL, type Look } from "../state/store";
-import { AREAS, BACKGROUNDS, type Background, type Gender, type HairStyle } from "../state/content";
+import { AREAS, BACKGROUNDS, OUTFITS, bodyOf, defaultOutfit, outfitOf, type Background, type Body, type Gender, type HairStyle } from "../state/content";
 import { readSave } from "../state/save";
 import { audio } from "../game/systems/audio";
 import { Icon } from "./Icon";
@@ -47,6 +47,8 @@ export function TitleScreen() {
   const [step, setStep] = useState<"intro" | "create">("intro");
   const [hairTouched, setHairTouched] = useState(false);
   const set = (patch: Partial<Look>) => setLook((l) => ({ ...l, ...patch }));
+  const outfit = outfitOf(look);
+  const body = bodyOf(outfit);
 
   // Show the character being designed on the street behind the form.
   useEffect(() => { setDraft(step === "create" ? look : null); }, [step, look, setDraft]);
@@ -124,7 +126,12 @@ export function TitleScreen() {
               {GENDERS.map((g) => (
                 <button
                   key={g.id}
-                  onClick={() => set({ gender: g.id, ...(hairTouched ? {} : { hairStyle: g.id === "female" ? "long" : "short" }) })}
+                  onClick={() => set({
+                    gender: g.id,
+                    // keep the outfit if it comes in this build; non-binary characters can wear either
+                    outfit: g.id === "nonbinary" || bodyOf(outfitOf(look)) === g.id ? outfitOf(look) : defaultOutfit(g.id),
+                    ...(hairTouched ? {} : { hairStyle: g.id === "female" ? "long" : "short" }),
+                  })}
                   className={`rounded-xl border py-2.5 text-sm font-semibold transition ${look.gender === g.id ? "border-brand bg-brand/15" : "border-white/10 bg-white/5 text-white/75 hover:border-white/25"}`}
                 >
                   {g.label}
@@ -158,9 +165,26 @@ export function TitleScreen() {
               ))}
             </div>
             <div className="mb-4"><Swatches colors={HAIRS} value={look.hair} onChange={(c) => set({ hair: c })} /></div>
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-white/50">Jacket</label>
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-white/50">Outfit</label>
+            {look.gender === "nonbinary" && (
+              <div className="mb-2 flex gap-1.5">
+                {(["male", "female"] as Body[]).map((b) => (
+                  <button key={b} onClick={() => set({ outfit: OUTFITS[b][0].id })} className={`rounded-full px-3 py-1.5 text-sm transition ${body === b ? "bg-white text-ink" : "bg-white/8 text-white/75 hover:bg-white/15"}`}>
+                    {b === "male" ? "Straight build" : "Curvy build"}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="mb-4 flex flex-wrap gap-1.5">
+              {OUTFITS[body].map((o) => (
+                <button key={o.id} onClick={() => set({ outfit: o.id })} className={`rounded-full px-3 py-1.5 text-sm transition ${outfit === o.id ? "bg-white text-ink" : "bg-white/8 text-white/75 hover:bg-white/15"}`}>
+                  {o.label}
+                </button>
+              ))}
+            </div>
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-white/50">Top</label>
             <div className="mb-4"><Swatches colors={JACKETS} value={look.jacket} onChange={(c) => set({ jacket: c })} /></div>
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-white/50">Trousers</label>
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-white/50">Bottoms</label>
             <div className="mb-6"><Swatches colors={TROUSERS} value={look.trousers} onChange={(c) => set({ trousers: c })} /></div>
 
             <button onClick={start} className="w-full rounded-2xl bg-brand py-4 font-display text-lg font-semibold shadow-lg shadow-brand/30 transition hover:bg-brand-dark active:scale-[0.99]">

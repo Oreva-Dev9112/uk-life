@@ -2,6 +2,7 @@
 // and kept as an image URL.
 import * as THREE from "three";
 import { Character, type Look } from "./actors/Character";
+import { Person } from "./actors/Person";
 
 const SIZE = 160;
 const cache = new Map<string, string>();
@@ -37,4 +38,26 @@ export function portrait(look: Look): string {
   c.dispose();
   cache.set(id, url);
   return url;
+}
+
+/** The same, for a character model (once its outfit has loaded). */
+export function personPortrait(look: Look): Promise<string> {
+  const id = `person:${JSON.stringify(look)}`;
+  const hit = cache.get(id);
+  if (hit) return Promise.resolve(hit);
+  const p = new Person(look);
+  return p.ready.then(() => {
+    const { renderer: r, scene: sc } = renderer && scene ? { renderer, scene } : setup();
+    sc.add(p.root);
+    p.update(0, 0, false);
+    p.root.updateMatrixWorld(true);
+    const head = p.root.getObjectByName("Head")!.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, 0.11, 0.04));
+    camera.position.copy(head).add(new THREE.Vector3(0.3, 0.06, 1.0));
+    camera.lookAt(head);
+    r.render(sc, camera);
+    const url = r.domElement.toDataURL("image/png");
+    p.dispose();
+    cache.set(id, url);
+    return url;
+  });
 }

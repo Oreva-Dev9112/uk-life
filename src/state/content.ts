@@ -407,6 +407,23 @@ export interface NpcDef {
 export type Gender = "male" | "female" | "nonbinary";
 export type HairStyle = "short" | "long" | "bun" | "afro" | "bald" | "cap";
 
+// Outfits for the character models (made by scripts/build-people.mjs); each id is a file in public/people.
+export type Body = "male" | "female";
+export const OUTFITS: Record<Body, { id: string; label: string }[]> = {
+  male: [
+    { id: "male-casual", label: "Casual" }, { id: "male-hoodie", label: "Hoodie" }, { id: "male-suit", label: "Suit" },
+    { id: "male-worker", label: "Hi-vis" }, { id: "male-punk", label: "Punk" }, { id: "male-summer", label: "Summer" },
+    { id: "male-backpacker", label: "Backpacker" },
+  ],
+  female: [
+    { id: "female-casual", label: "Casual" }, { id: "female-suit", label: "Suit" }, { id: "female-dress", label: "Dress" },
+    { id: "female-worker", label: "Hi-vis" }, { id: "female-punk", label: "Punk" }, { id: "female-shorts", label: "Shorts" },
+  ],
+};
+export const bodyOf = (outfit: string): Body => (outfit.startsWith("female") ? "female" : "male");
+export const defaultOutfit = (g: Gender) => (g === "female" ? "female-casual" : g === "male" ? "male-casual" : "male-hoodie");
+export const outfitOf = (look: { outfit?: string; gender: Gender }) => look.outfit ?? defaultOutfit(look.gender);
+
 export const NPCS: NpcDef[] = [
   {
     id: "priya", area: "albion", name: "Priya", age: 26, role: "A&E nurse",

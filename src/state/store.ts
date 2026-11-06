@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import {
   AREAS, BACKGROUNDS, DAY_NAMES, JOBS, LINES, NEED_DECAY, NEED_KEYS, NIGHT_BUS_FARE, NPCS, TUBE_FARE, WEEKLY_RENT,
-  isOpen, npcById, placeById, relationshipTier, travelMinutes, tubeRunning,
+  bodyOf, isOpen, npcById, outfitOf, placeById, relationshipTier, travelMinutes, tubeRunning,
   type AreaId, type Background, type Gender, type HairStyle, type JobId, type NeedKey, type Needs, type Topic,
 } from "./content";
 import { londonMinutesNow, londonWeatherAt } from "./london";
@@ -20,7 +20,7 @@ const clamp = (v: number, a = 0, b = 100) => Math.max(a, Math.min(b, v));
 const pick = <T,>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
 
 // ---------- types ----------
-export interface Look { skin: string; hair: string; jacket: string; trousers: string; hairStyle: HairStyle; gender: Gender }
+export interface Look { skin: string; hair: string; jacket: string; trousers: string; hairStyle: HairStyle; gender: Gender; outfit?: string }
 export interface Profile { name: string; background: Background; look: Look }
 export type Tone = "info" | "good" | "bad";
 export interface Toast { id: number; text: string; tone: Tone }
@@ -461,7 +461,9 @@ export const useGame = create<State>()((set, get) => {
         case "suit": {
           if (s.hasSuit) { toast("You've already got a suit. Hartley tuts.", "bad"); return; }
           if (!spend(action.price!, "Hartley & Sons: suit")) return;
-          set({ panel: null, hasSuit: true });
+          // (and you change into it, in the cut you already wear)
+          const suit = `${bodyOf(outfitOf(s.profile.look))}-suit`;
+          set({ panel: null, hasSuit: true, profile: { ...s.profile, look: { ...s.profile.look, outfit: suit } } });
           fade(action.fade ?? "…");
           tick(action.minutes);
           toast("You look like you own a yacht. You do not.", "good");

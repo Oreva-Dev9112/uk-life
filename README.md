@@ -10,7 +10,7 @@ People who like life sims such as The Sims, Gameloft's *Miami Nights* / *My Life
 
 ## What you can do
 
-- **Make a character:** name, gender (man, woman, non-binary), skin, hair and clothes, with a live 3D preview.
+- **Make a character:** name, gender (man, woman, non-binary), skin, hair, an outfit (casual, hoodie, suit, dress, hi-vis, punk and more) and its colours, with a live 3D preview.
 - **Live on a London high street** in London's real weather. You arrive at the real time of day, and from then on the weather follows the actual London forecast hour by hour, with sunrise and sunset to match. Wet roads, street lamps, neon and traffic that drives on the left.
 - **Look after your needs:** hunger, energy, hygiene, fun and social.
 - **Work:** baristas, fryers, bar staff, delivery riders, waiters, club promoters, market traders and a City analyst job that needs a suit and experience. Wages use the UK National Living Wage (£12.71/hr from April 2026).
@@ -31,7 +31,9 @@ People who like life sims such as The Sims, Gameloft's *Miami Nights* / *My Life
 - [Zustand](https://github.com/pmndrs/zustand) for game state
 - [Vite](https://vitejs.dev/) and TypeScript
 
-Every texture (brick, slate, asphalt, signs, shop interiors) is drawn in code at start-up, and the characters, vehicles and buildings are built from code. There are no downloaded 3D models or image assets. The fonts (Inter and Space Grotesk) load from Google Fonts.
+Every texture (brick, slate, asphalt, signs, shop interiors) is drawn in code at start-up, and the vehicles and buildings are built from code. The fonts (Inter and Space Grotesk) load from Google Fonts.
+
+Your character is a 3D model from Quaternius's [Ultimate Modular Men](https://quaternius.com/packs/ultimatemodularcharacters.html) and [Women](https://quaternius.com/packs/ultimatemodularwomen.html) packs (CC0). Only the outfits that suit London are used, without their weapons, and they're slimmed down by `scripts/build-people.mjs` into `public/people/` (about 2.5 MB for all 13 outfits). The hairstyles and umbrella are the game's own.
 
 Weather and sunrise/sunset times come from [Open-Meteo](https://open-meteo.com/), which is free and needs no API key (data under CC BY 4.0). If it can't be reached, the game makes up its own weather.
 
@@ -80,6 +82,10 @@ This is an early prototype. It's single-player, and it hasn't been tested on a r
 ## How it was made
 
 I started this on 9 October 2026, building it with an AI coding assistant (Claude Code). The code was first put in git on 3 November 2026, so the history starts there.
+
+## Credits
+
+Character models by [Quaternius](https://quaternius.com), CC0 ([licence](public/people/LICENSE.txt)). Weather data by [Open-Meteo](https://open-meteo.com/), CC BY 4.0.
 
 ## License
 
