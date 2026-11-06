@@ -1,12 +1,17 @@
-// Third-person orbit camera: drag to rotate, wheel/pinch to zoom, tap the ground to walk there.
+// Overhead follow camera: looks down at the player from above the road, angled towards the shop fronts of
+// whichever pavement they're on. Drag to turn it, wheel/pinch to zoom, tap the ground to walk there.
 import * as THREE from "three";
 import { FACADE } from "../world/layout";
 import { input } from "../systems/input";
+
+export const OVERHEAD = { pitch: 0.85, dist: 14, swing: 0.45 }; // swing: how far (radians) it turns towards the shop fronts
 
 export class CameraRig {
   yaw = 0.5;
   pitch = 0.38;
   dist = 8.5;
+  userYaw = 0; // the player's own turn on top of the automatic angle
+  private side = 1; // which pavement the camera favours: 1 = south, -1 = north (eased in between)
   target = new THREE.Vector3();
   mode: "follow" | "cinematic" | "creator" = "cinematic";
   // Character-creator stage: a spot on the north pavement outside the pub.
@@ -61,15 +66,15 @@ export class CameraRig {
     if (this.pointers.size === 2) {
       const [a, b] = [...this.pointers.values()];
       const d = Math.hypot(a.x - b.x, a.y - b.y);
-      if (this.pinchDist > 0) this.dist = THREE.MathUtils.clamp(this.dist * (this.pinchDist / d), 3.5, 18);
+      if (this.pinchDist > 0) this.dist = THREE.MathUtils.clamp(this.dist * (this.pinchDist / d), 6, 24);
       this.pinchDist = d;
       return;
     }
     if (Math.hypot(e.clientX - p.sx, e.clientY - p.sy) > 6) this.dragged = true;
     if (this.dragged && this.mode === "creator") this.onDrag?.(dx, dy);
     if (this.dragged && this.mode === "follow") {
-      this.yaw -= dx * 0.006;
-      this.pitch = THREE.MathUtils.clamp(this.pitch + dy * 0.004, 0.12, 1.25);
+      this.userYaw -= dx * 0.006;
+      this.pitch = THREE.MathUtils.clamp(this.pitch + dy * 0.004, 0.45, 1.3);
     }
   };
 
@@ -90,7 +95,7 @@ export class CameraRig {
   private wheel = (e: WheelEvent) => {
     e.preventDefault();
     if (this.mode !== "follow") return;
-    this.dist = THREE.MathUtils.clamp(this.dist * (1 + e.deltaY * 0.0012), 3.5, 18);
+    this.dist = THREE.MathUtils.clamp(this.dist * (1 + e.deltaY * 0.0012), 6, 24);
   };
 
   update(dt: number, focus: THREE.Vector3) {
@@ -117,7 +122,10 @@ export class CameraRig {
       this.camera.lookAt(this.look);
       return;
     }
-    this.target.lerp(new THREE.Vector3(focus.x, focus.y + 1.35, focus.z), 1 - Math.exp(-10 * dt));
+    // Look along the street (+x), turned towards the shop fronts on the player's side; it eases across as they cross the road.
+    this.side = THREE.MathUtils.damp(this.side, -THREE.MathUtils.clamp(focus.z / 5, -1, 1), 2.5, dt);
+    this.yaw = Math.atan2(-Math.cos(OVERHEAD.swing), this.side * Math.sin(OVERHEAD.swing)) + this.userYaw;
+    this.target.lerp(new THREE.Vector3(focus.x, focus.y + 0.9, focus.z), 1 - Math.exp(-10 * dt));
     const off = new THREE.Vector3(
       Math.sin(this.yaw) * Math.cos(this.pitch),
       Math.sin(this.pitch),
@@ -136,8 +144,18 @@ export class CameraRig {
     this.camera.lookAt(this.target);
   }
 
-  snapBehind(facing: number) {
-    this.yaw = facing + Math.PI;
+  /** Starts following from the default overhead view. */
+  startFollow(focus: THREE.Vector3) {
     this.mode = "follow";
+    this.userYaw = 0;
+    this.pitch = OVERHEAD.pitch;
+    this.dist = OVERHEAD.dist;
+    this.snapTo(focus);
+  }
+
+  /** Jumps straight to the player (after a teleport), already on their side of the road. */
+  snapTo(focus: THREE.Vector3) {
+    this.side = focus.z > 0 ? -1 : 1;
+    this.target.set(focus.x, focus.y + 0.9, focus.z);
   }
 }

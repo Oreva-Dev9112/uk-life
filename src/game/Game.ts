@@ -234,9 +234,7 @@ export class Game {
           this.player.setLook(s.profile.look, this.scene);
           this.player.char.root.visible = true;
           this.player.facing = Math.PI / 2;
-          this.rig.snapBehind(this.player.facing);
-          this.rig.pitch = 0.32;
-          this.rig.dist = 7.5;
+          this.rig.startFollow(this.player.pos);
         } else if (s.phase === "title") {
           this.player.char.root.visible = false;
           this.rig.mode = "cinematic";
@@ -247,7 +245,7 @@ export class Game {
       if (s.teleport && s.teleport.key !== this.lastTeleportKey) {
         this.lastTeleportKey = s.teleport.key;
         this.player.teleport(s.teleport.x, s.teleport.z);
-        this.rig.target.copy(this.player.pos);
+        this.rig.snapTo(this.player.pos);
       }
       if (s.settings.quality !== prev.settings.quality) {
         this.setSMAA(s.settings.quality === "high");
