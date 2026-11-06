@@ -10,6 +10,8 @@ const PATHS: Record<string, string> = {
   rain: "M7 15a4 4 0 0 1-.6-7.96A6 6 0 0 1 18 8a3.5 3.5 0 0 1 0 7H7zM8 18l-1 3M12 18l-1 3M16 18l-1 3",
   cloud: "M7 18a4.5 4.5 0 0 1-.7-8.95A6.5 6.5 0 0 1 18.5 9 4.5 4.5 0 0 1 18 18H7z",
   sun: "M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4",
+  moon: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z",
+  star: "M12 2.8l2.8 5.8 6.4.9-4.6 4.5 1.1 6.3L12 17.3l-5.7 3 1.1-6.3-4.6-4.5 6.4-.9z",
   phone: "M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM11 18h2",
   message: "M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z",
   briefcase: "M4 7h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1zM9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18",
@@ -31,9 +33,9 @@ const PATHS: Record<string, string> = {
   refresh: "M21 12a9 9 0 1 1-2.6-6.4L21 8M21 3v5h-5",
 };
 
-export function Icon({ name, size = 18, className = "", stroke = 2 }: { name: keyof typeof PATHS | string; size?: number; className?: string; stroke?: number }) {
+export function Icon({ name, size = 18, className = "", stroke = 2, fill = "none" }: { name: keyof typeof PATHS | string; size?: number; className?: string; stroke?: number; fill?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
       <path d={PATHS[name] ?? PATHS.x} />
     </svg>
   );

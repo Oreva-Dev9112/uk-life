@@ -34,6 +34,18 @@ body {
   box-shadow: 0 10px 40px rgb(0 0 0 / 0.35), inset 0 1px 0 rgb(255 255 255 / 0.05);
 }
 
+/* In-game HUD: solid navy plates with a bevelled edge, like a classic mobile life sim. */
+.plate {
+  background: linear-gradient(180deg, #213063 0%, #131d40 55%, #0d1532 100%);
+  border: 1.5px solid rgb(176 198 255 / 0.4);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.45), inset 0 1px 0 rgb(255 255 255 / 0.2), inset 0 -2px 0 rgb(0 0 0 / 0.35);
+}
+.hudbar {
+  background: linear-gradient(180deg, #24346a 0%, #141e42 60%, #0d1532 100%);
+  border-bottom: 1.5px solid rgb(176 198 255 / 0.4);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.4);
+}
+
 .tabular {
   font-variant-numeric: tabular-nums;
 }

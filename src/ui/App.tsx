@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Game } from "../game/Game";
 import { useGame } from "../state/store";
 import { TitleScreen } from "./TitleScreen";
-import { TopBar, Goals, Needs, InteractPrompt, Toasts, Fade, PhoneButton, GameOver } from "./HUD";
+import { TopBar, Goals, Mood, InteractPrompt, Toasts, Fade, PhoneButton, GameOver } from "./HUD";
 import { PlacePanel, JobsPanel, DialogPanel, TubePanel } from "./Panels";
 import { Phone } from "./Phone";
 import { Joystick } from "./Joystick";
@@ -54,7 +54,7 @@ export function App() {
         <div className="pointer-events-none absolute inset-0">
           <TopBar />
           <Goals touch={isTouch} />
-          <Needs touch={isTouch} />
+          <Mood touch={isTouch} />
           {isTouch && !panel && <Joystick />}
           <InteractPrompt touch={isTouch} />
           {panel?.kind === "place" && <PlacePanel id={panel.id} />}
