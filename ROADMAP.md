@@ -24,6 +24,15 @@ Planned work, roughly in order. Hours are estimates.
 - [ ] **Snow** (~2 h). The real forecast sometimes says snow; for now it falls as drizzle.
 - [ ] **Cache the weather** (~1 h). Open-Meteo's free tier allows fewer than 10,000 calls a day per app. One call per visit is fine for now, but if the game gets busy the forecast should come through a cached Vercel function, so it's a few calls an hour however many people play.
 
+## Plan your real life
+
+The game as a place to rehearse adult life: map out a path, see where it leads, then take what works into the real world. Everything runs on your own device, with no accounts and no personal data sent anywhere. These are planning aids, not financial advice.
+
+- [ ] **Budget and expense calculator** (~4 h). A phone app that breaks down where your money goes each week (rent, food, travel, fun) and lets you enter your own real numbers alongside the game's.
+- [ ] **Rent versus wages** (~3 h). Compare a job's take-home pay against rent and bills in each district, using real UK figures like the National Living Wage and Tube fares.
+- [ ] **"What if" paths** (~5 h). Try a choice (a cheaper flat, a better-paid job, saving £20 a week) and see a projection of how it plays out over months and years.
+- [ ] **Life map** (~4 h). A timeline of your goals (move out, first job, savings target) with the steps that get you there, in the game and in real life.
+
 ## More London
 
 - [ ] **New districts** (~5 h each): Westminster, Hyde Park (a park, not a street), Greenwich and Brixton. They already appear on the Tube map as "coming soon".
