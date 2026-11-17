@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { FACADE } from "../world/layout";
 import { input } from "../systems/input";
 
-export const OVERHEAD = { pitch: 0.85, dist: 14, swing: 0.45 }; // swing: how far (radians) it turns towards the shop fronts
+export const OVERHEAD = { pitch: 0.85, dist: 14, swing: 0.45, minDist: 6, maxDist: 24 }; // swing: how far (radians) it turns towards the shop fronts
 
 export class CameraRig {
   yaw = 0.5;
@@ -66,7 +66,7 @@ export class CameraRig {
     if (this.pointers.size === 2) {
       const [a, b] = [...this.pointers.values()];
       const d = Math.hypot(a.x - b.x, a.y - b.y);
-      if (this.pinchDist > 0) this.dist = THREE.MathUtils.clamp(this.dist * (this.pinchDist / d), 6, 24);
+      if (this.pinchDist > 0) this.dist = THREE.MathUtils.clamp(this.dist * (this.pinchDist / d), OVERHEAD.minDist, OVERHEAD.maxDist);
       this.pinchDist = d;
       return;
     }
@@ -95,7 +95,7 @@ export class CameraRig {
   private wheel = (e: WheelEvent) => {
     e.preventDefault();
     if (this.mode !== "follow") return;
-    this.dist = THREE.MathUtils.clamp(this.dist * (1 + e.deltaY * 0.0012), 6, 24);
+    this.dist = THREE.MathUtils.clamp(this.dist * (1 + e.deltaY * 0.0012), OVERHEAD.minDist, OVERHEAD.maxDist);
   };
 
   update(dt: number, focus: THREE.Vector3) {

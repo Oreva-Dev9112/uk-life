@@ -21,6 +21,7 @@ import { londonDaylightAt } from "../state/london";
 import { npcById, placesIn, type AreaId, type Place } from "../state/content";
 import { seeThroughUniforms } from "./world/seeThrough";
 import { preloadPeople } from "./actors/Person";
+import { ISO, ISO_FOG, ISO_FOV, lookPasses } from "./look";
 
 const STAGE_FACING = -Math.PI / 2 - 0.35; // the creator preview faces down the pavement, slightly towards the road
 const GAME_MINUTES_PER_SECOND = 1;
@@ -90,6 +91,7 @@ export class Game {
     const bloom = new BloomEffect({ mipmapBlur: true, intensity: 1.15, luminanceThreshold: 0.85, luminanceSmoothing: 0.3, radius: 0.72 });
     this.composer.addPass(new EffectPass(this.camera, bloom, new ToneMappingEffect({ mode: ToneMappingMode.AGX }), new VignetteEffect({ offset: 0.32, darkness: 0.5 })));
     this.setSMAA(quality === "high");
+    for (const pass of lookPasses(this.camera)) this.composer.addPass(pass);
 
     // sky + environment
     this.scene.add(this.sky.mesh);
@@ -296,7 +298,7 @@ export class Game {
     this.renderer.setSize(w, h, false);
     this.composer.setSize(w, h);
     this.camera.aspect = w / h;
-    this.camera.fov = w / h < 0.8 ? 64 : 52;
+    this.camera.fov = ISO ? ISO_FOV * (w / h < 0.8 ? 1.3 : 1) : w / h < 0.8 ? 64 : 52;
     this.camera.updateProjectionMatrix();
   }
 
@@ -377,7 +379,7 @@ export class Game {
     this.sky.mesh.position.copy(this.camera.position);
     const fog = this.scene.fog as THREE.FogExp2;
     fog.color.copy(sk.fog);
-    fog.density = 0.011 + this.rainVis * 0.011 + this.cloudVis * 0.003;
+    fog.density = (0.011 + this.rainVis * 0.011 + this.cloudVis * 0.003) * (ISO ? ISO_FOG : 1);
     this.hemi.color.copy(sk.hemiSky);
     this.hemi.groundColor.copy(sk.hemiGround);
     this.hemi.intensity = sk.hemiI;
@@ -433,7 +435,7 @@ export class Game {
     this.rig.update(dt, this.player.pos);
     this.updateSeeThrough(playing && this.rig.mode === "follow");
     this.lighting.update(dt, focus, night, this.wet, this.rainVis, hour);
-    this.rain.update(t, this.camera.position, this.rainVis, night);
+    this.rain.update(t, ISO ? this.rig.target : this.camera.position, this.rainVis, night); // (the iso camera is too far away to rain around)
     audio.setRain(this.rainVis);
     this.composer.render(dt);
   };
