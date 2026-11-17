@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UK Life UI Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lilita+One&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #16203f;          /* outlines and dark text */
+    --royal-a: #3566d6;      /* panel gradient */
+    --royal-b: #1f43a3;
+    --royal-c: #17337f;
+    --sky: #4fb0ff;
+    --red-a: #ff5a6a; --red-b: #d9223f;
+    --green-a: #8ef06a; --green-b: #2fae3b;
+    --gold: #ffcc33;
+    --pink: #ff4f8b;
+    --cream: #fff8e8;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #0b0f1e; font-family: "Fredoka", system-ui, sans-serif; color: #fff; }
+  .frame { position: relative; width: 1280px; height: 800px; overflow: hidden; margin: 0 auto 24px; background: #000 center / cover no-repeat; }
+  .shade { position: absolute; inset: 0; }
+
+  /* ---------- type ---------- */
+  .display { font-family: "Lilita One", "Fredoka", sans-serif; letter-spacing: .5px; }
+  .outlined { color: #fff; -webkit-text-stroke: 6px var(--ink); paint-order: stroke fill; }
+  .drop { text-shadow: 0 3px 0 rgba(22, 32, 63, .55); }
+
+  /* ---------- panels ---------- */
+  .panel {
+    background: linear-gradient(180deg, var(--royal-a) 0%, var(--royal-b) 48%, var(--royal-c) 100%);
+    border: 3px solid #fff; border-radius: 22px;
+    box-shadow: 0 0 0 3px var(--ink), 0 14px 30px rgba(0,0,0,.45), inset 0 3px 0 rgba(255,255,255,.35), inset 0 -5px 0 rgba(0,0,0,.22);
+  }
+  .card {
+    background: linear-gradient(180deg, #ffffff, #e9eefb); color: var(--ink);
+    border: 3px solid var(--ink); border-radius: 18px;
+    box-shadow: inset 0 -4px 0 rgba(22,32,63,.12), 0 4px 0 var(--ink);
+  }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    font-family: "Lilita One", sans-serif; font-size: 22px; color: #fff; letter-spacing: .4px;
+    padding: 12px 22px; border-radius: 16px; border: 3px solid var(--ink);
+    box-shadow: inset 0 3px 0 rgba(255,255,255,.5), inset 0 -5px 0 rgba(0,0,0,.22), 0 5px 0 var(--ink);
+    text-shadow: 0 2px 0 rgba(22,32,63,.5);
+  }
+  .btn svg { width: 30px; height: 30px; flex: none; }
+  .btn.pressed { transform: translateY(4px); box-shadow: inset 0 3px 0 rgba(255,255,255,.4), inset 0 -3px 0 rgba(0,0,0,.2), 0 1px 0 var(--ink); }
+  .red { background: linear-gradient(180deg, var(--red-a), var(--red-b)); }
+  .blue { background: linear-gradient(180deg, #62bcff, #1f74e0); }
+  .green { background: linear-gradient(180deg, var(--green-a), var(--green-b)); }
+  .gold { background: linear-gradient(180deg, #ffe066, #f2a81d); color: var(--ink); text-shadow: 0 1px 0 rgba(255,255,255,.6); }
+  .white { background: linear-gradient(180deg, #fff, #dde5f5); color: var(--ink); text-shadow: none; }
+  .disabled { background: linear-gradient(180deg, #a8b1c7, #7d87a1); color: #e9edf7; opacity: .85; }
+
+  /* ---------- HUD ---------- */
+  .topbar {
+    position: absolute; left: 0; right: 0; top: 0; height: 58px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 20px;
+    background: linear-gradient(180deg, #3a6ee0, #1f43a3 60%, #183a8e);
+    border-bottom: 3px solid #fff; box-shadow: 0 3px 0 var(--ink), 0 8px 20px rgba(0,0,0,.35);
+  }
+  .topbar .val { font-family: "Lilita One"; font-size: 30px; display: flex; align-items: center; gap: 10px; }
+  .topbar .val svg { width: 36px; height: 36px; }
+  .topbar .right { justify-self: end; font-family: "Lilita One"; font-size: 22px; letter-spacing: 1px; }
+  .topbar .right span { color: #bcd3ff; }
+  .goal { position: absolute; left: 18px; top: 76px; padding: 10px 16px 10px 12px; display: flex; gap: 12px; align-items: center; max-width: 360px; }
+  .goal svg { width: 40px; height: 40px; flex: none; }
+  .goal b { font-family: "Lilita One"; font-weight: 400; font-size: 20px; display: block; }
+  .goal small { font-size: 15px; font-weight: 600; color: #cfe0ff; }
+
+  .mood { position: absolute; left: 18px; bottom: 18px; display: flex; align-items: flex-end; gap: 10px; }
+  .face { width: 92px; height: 92px; border-radius: 22px; border: 3px solid #fff; box-shadow: 0 0 0 3px var(--ink), 0 8px 16px rgba(0,0,0,.4);
+    background: radial-gradient(circle at 50% 30%, #9fd8ff, #3b7be0 70%); overflow: hidden; position: relative; }
+  .face i { position: absolute; inset: 0; background-repeat: no-repeat; }
+  .moodbox { padding: 10px 12px 12px; width: 300px; }
+  .moodbox .who { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 16px; color: #dbe7ff; margin-bottom: 6px; }
+  .bar { position: relative; height: 34px; border-radius: 17px; border: 3px solid var(--ink); background: #0c1531; box-shadow: inset 0 3px 6px rgba(0,0,0,.6); overflow: hidden; }
+  .bar .fill { position: absolute; inset: 0 auto 0 0; border-radius: 14px; box-shadow: inset 0 4px 0 rgba(255,255,255,.45), inset 0 -4px 0 rgba(0,0,0,.18); }
+  .bar .word { position: absolute; inset: 0; display: grid; place-items: center; font-family: "Lilita One"; font-size: 22px; letter-spacing: 1.5px; }
+  .tiny-needs { display: flex; gap: 5px; }
+  .tiny-needs svg { width: 22px; height: 22px; }
+
+  .phonebtn { position: absolute; right: 22px; bottom: 18px; width: 74px; height: 112px; }
+
+  /* ---------- phone ---------- */
+  .phone { position: absolute; width: 330px; height: 660px; border-radius: 50px; padding: 14px;
+    background: linear-gradient(145deg, #4a5372, #1b2034 45%, #0d1020);
+    box-shadow: 0 0 0 3px var(--ink), inset 0 0 0 2px rgba(255,255,255,.18), 0 24px 50px rgba(0,0,0,.6); }
+  .screen { position: relative; width: 100%; height: 100%; border-radius: 38px; overflow: hidden;
+    background: linear-gradient(180deg, #ff9a7a 0%, #c86bb0 38%, #5560c9 70%, #283a8f 100%); }
+  .screen .skyline { position: absolute; left: 0; right: 0; bottom: 210px; width: 100%; opacity: .9; }
+  .status { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 0; font-weight: 700; font-size: 15px; }
+  .notch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 96px; height: 26px; border-radius: 14px; background: #0d1020; }
+  .clock { text-align: center; margin-top: 34px; }
+  .clock .t { font-family: "Lilita One"; font-size: 72px; line-height: 1; }
+  .clock .d { font-weight: 700; font-size: 17px; opacity: .95; }
+  .weatherchip { display: inline-flex; gap: 8px; align-items: center; margin-top: 10px; padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,.22); border: 2px solid rgba(255,255,255,.5); font-weight: 700; font-size: 15px; }
+  .weatherchip svg { width: 24px; height: 24px; }
+  .apps { position: absolute; left: 18px; right: 18px; bottom: 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 10px;
+    padding: 18px 10px 14px; border-radius: 28px; background: rgba(13, 22, 60, .38); backdrop-filter: blur(6px); border: 2px solid rgba(255,255,255,.25); }
+  .app { display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; text-shadow: 0 2px 0 rgba(22,32,63,.6); position: relative; }
+  .app svg { width: 70px; height: 70px; filter: drop-shadow(0 4px 0 rgba(22,32,63,.55)); }
+  .badge { position: absolute; top: -6px; right: 4px; min-width: 28px; height: 28px; padding: 0 7px; border-radius: 14px; display: grid; place-items: center;
+    font-family: "Lilita One"; font-size: 17px; background: linear-gradient(#ff6b7b, #d9223f); border: 3px solid #fff; box-shadow: 0 0 0 2px var(--ink); }
+  .homebar { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); width: 120px; height: 6px; border-radius: 3px; background: rgba(255,255,255,.85); }
+
+  /* ---------- conversation ---------- */
+  .talk { position: absolute; left: 70px; right: 70px; bottom: 26px; height: 300px; padding: 26px 30px 26px 300px; }
+  .talk .card-bg { position: absolute; left: 26px; bottom: 24px; width: 238px; height: 300px; border-radius: 22px; border: 3px solid #fff;
+    box-shadow: 0 0 0 3px var(--ink), inset 0 3px 0 rgba(255,255,255,.35);
+    background: radial-gradient(circle at 50% 28%, #ffe7a8 0%, #ff9fb5 38%, #8b6cf0 75%, #4b3db8 100%); overflow: hidden; }
+  .talk .card-bg::after { content: ""; position: absolute; inset: auto 0 0 0; height: 70px; background: linear-gradient(180deg, transparent, rgba(22,32,63,.45)); }
+  .talk .portrait { position: absolute; left: -8px; bottom: 18px; width: 300px; height: 440px; background: center bottom / contain no-repeat;
+    filter: drop-shadow(0 0 0 #fff) drop-shadow(4px 0 0 #fff) drop-shadow(-4px 0 0 #fff) drop-shadow(0 -4px 0 #fff) drop-shadow(0 8px 14px rgba(0,0,0,.5)); }
+  .nametag { position: absolute; left: 286px; top: -34px; display: flex; align-items: center; gap: 14px; padding: 8px 18px; }
+  .nametag b { font-family: "Lilita One"; font-weight: 400; font-size: 30px; }
+  .role { font-weight: 700; font-size: 15px; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.2); border: 2px solid rgba(255,255,255,.55); }
+  .ratings { position: absolute; right: 30px; top: -30px; display: flex; gap: 14px; padding: 8px 16px; align-items: center; }
+  .ratings svg { width: 30px; height: 30px; }
+  .ratings .label { font-weight: 700; font-size: 13px; color: #cfe0ff; margin-right: 2px; }
+  .speech { font-size: 25px; font-weight: 600; line-height: 1.32; color: var(--cream); text-shadow: 0 2px 0 rgba(22,32,63,.45); margin-top: 6px; }
+  .speech em { color: #ffd479; font-style: normal; }
+  .choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+  .choices .btn { font-size: 20px; padding: 10px 14px; }
+  .reward { position: absolute; left: 50%; top: 84px; transform: translateX(-50%); padding: 12px 22px; display: flex; gap: 12px; align-items: center; font-family: "Lilita One"; font-size: 24px; }
+  .reward svg { width: 34px; height: 34px; }
+
+  /* ---------- place menu ---------- */
+  .place { position: absolute; right: 60px; top: 90px; width: 470px; padding: 0 0 22px; overflow: hidden; }
+  .place .head { position: relative; height: 128px; background: linear-gradient(135deg, #2b9b6b, #12623f); border-bottom: 3px solid #fff; display: flex; align-items: flex-end; padding: 0 22px 14px; }
+  .place .head .awning { position: absolute; left: 0; right: 0; top: 0; height: 34px; background: repeating-linear-gradient(90deg, #fff 0 34px, #1e7f55 34px 68px); border-bottom: 3px solid var(--ink); }
+  .place .head h3 { font-family: "Lilita One"; font-weight: 400; font-size: 40px; }
+  .place .head p { font-weight: 600; font-size: 16px; color: #d7ffe9; margin-left: 12px; margin-bottom: 8px; }
+  .item { display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center; margin: 14px 18px 0; padding: 10px 12px; }
+  .item svg { width: 60px; height: 60px; }
+  .item b { font-family: "Lilita One"; font-weight: 400; font-size: 21px; display: block; }
+  .item small { font-weight: 600; font-size: 14px; color: #44527a; }
+  .chips { display: flex; gap: 6px; margin-top: 4px; }
+  .chip { font-weight: 700; font-size: 13px; padding: 2px 8px; border-radius: 999px; border: 2px solid var(--ink); }
+  .chip.up { background: #c9f7b8; } .chip.down { background: #ffd2d7; }
+  .item .btn { font-size: 19px; padding: 8px 14px; }
+
+  /* ---------- kit sheet ---------- */
+  .sheet { background: radial-gradient(circle at 20% 0%, #2c4fae, #101a3f 60%); padding: 34px 44px; }
+  .sheet h1 { font-family: "Lilita One"; font-weight: 400; font-size: 44px; }
+  .sheet h2 { font-family: "Lilita One"; font-weight: 400; font-size: 22px; color: #bcd3ff; margin-bottom: 12px; letter-spacing: .6px; }
+  .grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 26px 40px; margin-top: 18px; }
+  .row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .swatch { width: 74px; text-align: center; font-size: 12px; font-weight: 700; color: #cfe0ff; }
+  .swatch i { display: block; height: 52px; border-radius: 14px; border: 3px solid #fff; box-shadow: 0 0 0 2px var(--ink); margin-bottom: 4px; }
+  .iconrow svg { width: 64px; height: 64px; filter: drop-shadow(0 4px 0 rgba(0,0,0,.35)); }
+  .smallicons svg { width: 40px; height: 40px; }
+  .typo .big { font-family: "Lilita One"; font-size: 46px; line-height: 1; }
+  .typo p { font-size: 19px; font-weight: 600; color: #e3ecff; margin-top: 6px; }
+  .credit { position: absolute; right: 26px; bottom: 16px; font-size: 13px; color: #9fb4e6; font-weight: 600; }
+
+  /* ---------- illustrated portraits ---------- */
+  .bust svg { display: block; width: 100%; height: 100%; }
+  .face .bust { position: absolute; left: -8%; top: 4%; width: 116%; height: 116%; }
+  .talk .card-bg .bust { position: absolute; left: 0; right: 0; bottom: -4px; height: 270px; }
+  .compare { background: radial-gradient(circle at 30% 0%, #2c4fae, #101a3f 62%); padding: 30px 40px; }
+  .compare h1 { font-family: "Lilita One"; font-weight: 400; font-size: 40px; }
+  .pair { display: flex; gap: 22px; margin-top: 14px; }
+  .pcard { position: relative; width: 200px; height: 236px; border-radius: 22px; border: 3px solid #fff; box-shadow: 0 0 0 3px var(--ink); overflow: hidden;
+    background: radial-gradient(circle at 50% 28%, #ffe7a8 0%, #ff9fb5 38%, #8b6cf0 75%, #4b3db8 100%); }
+  .pcard img { position: absolute; left: 50%; top: -6px; height: 560px; transform: translateX(-50%); }
+  .pcard .bust { position: absolute; left: 0; right: 0; bottom: -2px; height: 220px; }
+  .tag { position: absolute; left: 10px; top: 10px; font-family: "Lilita One"; font-size: 18px; padding: 3px 12px; border-radius: 999px; border: 3px solid var(--ink); }
+  .tag.before { background: #c7cfe2; color: var(--ink); } .tag.after { background: linear-gradient(#8ef06a,#2fae3b); }
+  .moods { display: flex; gap: 12px; margin-top: 14px; }
+  .mface { width: 104px; text-align: center; font-family: "Lilita One"; font-size: 15px; letter-spacing: .5px; }
+  .mface .ring { position: relative; width: 104px; height: 104px; border-radius: 24px; border: 3px solid #fff; box-shadow: 0 0 0 3px var(--ink); overflow: hidden; margin-bottom: 6px;
+    background: radial-gradient(circle at 50% 30%, #9fd8ff, #3b7be0 70%); }
+  .mface .ring .bust { position: absolute; left: -8%; top: 4%; width: 116%; height: 116%; }
+  .cast { display: grid; grid-template-columns: repeat(12, 1fr); gap: 10px; margin-top: 16px; }
+  .cast .mface { width: auto; font-size: 14px; }
+  .cast .ring { width: 100%; height: 92px; background: radial-gradient(circle at 50% 30%, #ffe7a8, #ff9fb5 55%, #8b6cf0); }
+  .cast small { display: block; font-family: "Fredoka"; font-weight: 600; font-size: 11px; color: #bcd3ff; letter-spacing: 0; }
+  .h2 { font-family: "Lilita One"; font-size: 21px; color: #bcd3ff; letter-spacing: .6px; margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<!-- =================== shared icon drawings (drawn for UK Life) =================== -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="gGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ef07a"/><stop offset="1" stop-color="#1f9a3a"/></linearGradient>
+    <linearGradient id="gOrange" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb35c"/><stop offset="1" stop-color="#ec6a1c"/></linearGradient>
+    <linearGradient id="gTeal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ee0d2"/><stop offset="1" stop-color="#14918f"/></linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe066"/><stop offset="1" stop-color="#f0a21a"/></linearGradient>
+    <linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6cc4ff"/><stop offset="1" stop-color="#2369e0"/></linearGradient>
+    <linearGradient id="gPurple" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c38bff"/><stop offset="1" stop-color="#6d3bd6"/></linearGradient>
+    <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7a7a"/><stop offset="1" stop-color="#d5223c"/></linearGradient>
+    <linearGradient id="gPink" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9ccc"/><stop offset="1" stop-color="#e3398a"/></linearGradient>
+    <linearGradient id="gGrey" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d7deeb"/><stop offset="1" stop-color="#7d8aa6"/></linearGradient>
+    <linearGradient id="gCoin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2a0"/><stop offset=".5" stop-color="#ffcc33"/><stop offset="1" stop-color="#e09412"/></linearGradient>
+    <linearGradient id="gLeather" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9763e"/><stop offset="1" stop-color="#7a4421"/></linearGradient>
+
+    <!-- app tile: gradient square with a glossy top -->
+    <symbol id="tile" viewBox="0 0 64 64">
+      <rect x="3" y="3" width="58" height="58" rx="17" stroke="#16203f" stroke-width="3"/>
+    </symbol>
+    <symbol id="gloss" viewBox="0 0 64 64"><path d="M9 26 C 20 16, 44 16, 55 26 V 17 C 55 11, 51 8, 45 8 H 19 C 13 8, 9 11, 9 17 Z" fill="#fff" opacity=".32"/></symbol>
+
+    <symbol id="i-messages" viewBox="0 0 64 64">
+      <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#gGreen)" stroke="#16203f" stroke-width="3"/>
+      <use href="#gloss"/>
+      <path d="M14 22 C14 16, 18 14, 24 14 H40 C46 14, 50 17, 50 23 V33 C50 39, 46 42, 40 42 H28 L19 50 L21 42 C16 41, 14 38, 14 33 Z" fill="#fff" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="24" cy="28" r="3.2" fill="#16203f"/><circle cx="32" cy="28" r="3.2" fill="#16203f"/><circle cx="40" cy="28" r="3.2" fill="#16203f"/>
+    </symbol>
+    <symbol id="i-contacts" viewBox="0 0 64 64">
+      <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#gOrange)" stroke="#16203f" stroke-width="3"/>
+      <use href="#gloss"/>
+      <circle cx="40" cy="25" r="7.5" fill="#ffe2c7" stroke="#16203f" stroke-width="3"/>
+      <path d="M28 47 C28 38, 34 34, 40 34 C46 34, 52 38, 52 47 Z" fill="#7fd0ff" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="25" cy="27" r="8.5" fill="#fff" stroke="#16203f" stroke-width="3"/>
+      <path d="M11 51 C11 41, 18 37, 25 37 C32 37, 39 41, 39 51 Z" fill="#fff" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-jobs" viewBox="0 0 64 64">
+      <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#gTeal)" stroke="#16203f" stroke-width="3"/>
+      <use href="#gloss"/>
+      <path d="M25 22 V18 C25 16, 26 15, 28 15 H36 C38 15, 39 16, 39 18 V22" fill="none" stroke="#16203f" stroke-width="3"/>
+      <rect x="12" y="22" width="40" height="27" rx="6" fill="url(#gLeather)" stroke="#16203f" stroke-width="3"/>
+      <path d="M12 33 H52" stroke="#16203f" stroke-width="3"/>
+      <rect x="28" y="29" width="8" height="8" rx="2" fill="url(#gCoin)" stroke="#16203f" stroke-width="2.5"/>
+    </symbol>
+    <symbol id="i-bank" viewBox="0 0 64 64">
+      <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#gPurple)" stroke="#16203f" stroke-width="3"/>
+      <use href="#gloss"/>
+      <circle cx="32" cy="34" r="17" fill="url(#gCoin)" stroke="#16203f" stroke-width="3"/>
+      <circle cx="32" cy="34" r="12" fill="none" stroke="#c98612" stroke-width="2"/>
+      <path d="M37 27 C35 24, 29 24, 28.5 29 C28 32, 29 35, 28 39 H38 M25.5 33 H34" fill="none" stroke="#16203f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-map" viewBox="0 0 64 64">
+      <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#gBlue)" stroke="#16203f" stroke-width="3"/>
+      <use href="#gloss"/>
+      <path d="M11 20 L23 15 L37 20 L52 15 V45 L37 50 L23 45 L11 50 Z" fill="#fffbe9" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M23 15 V45 M37 20 V50" stroke="#16203f" stroke-width="2.5"/>
+      <path d="M13 38 C 20 34, 26 40, 33 33 S 46 32, 50 27" fill="none" stroke="#4aa3ff" stroke-width="3" stroke-linecap="round"/>
+      <path d="M41 20 C41 15, 49 15, 49 20 C49 24, 45 28, 45 31 C45 28, 41 24, 41 20 Z" fill="#ff4f5e" stroke="#16203f" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="45" cy="20.5" r="1.8" fill="#fff"/>
+    </symbol>
+    <symbol id="i-stats" viewBox="0 0 64 64">
+      <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#gRed)" stroke="#16203f" stroke-width="3"/>
+      <use href="#gloss"/>
+      <rect x="13" y="34" width="10" height="15" rx="3" fill="#7ef07a" stroke="#16203f" stroke-width="3"/>
+      <rect x="27" y="26" width="10" height="23" rx="3" fill="#ffe066" stroke="#16203f" stroke-width="3"/>
+      <rect x="41" y="17" width="10" height="32" rx="3" fill="#6cc4ff" stroke="#16203f" stroke-width="3"/>
+      <path d="M12 27 L24 19 L31 22 L44 11" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-goals" viewBox="0 0 64 64">
+      <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#gGold)" stroke="#16203f" stroke-width="3"/>
+      <use href="#gloss"/>
+      <circle cx="30" cy="35" r="16" fill="#fff" stroke="#16203f" stroke-width="3"/>
+      <circle cx="30" cy="35" r="10.5" fill="#ff4f5e" stroke="#16203f" stroke-width="2.5"/>
+      <circle cx="30" cy="35" r="5" fill="#fff" stroke="#16203f" stroke-width="2.5"/>
+      <path d="M30 35 L48 17" stroke="#16203f" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M45 13 L52 12 L51 19 Z" fill="#6cc4ff" stroke="#16203f" stroke-width="2.5" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-shop" viewBox="0 0 64 64">
+      <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#gPink)" stroke="#16203f" stroke-width="3"/>
+      <use href="#gloss"/>
+      <path d="M24 24 V20 C24 15, 28 13, 32 13 C36 13, 40 15, 40 20 V24" fill="none" stroke="#16203f" stroke-width="3.5"/>
+      <path d="M15 24 H49 L46 50 C46 52, 44 53, 42 53 H22 C20 53, 18 52, 18 50 Z" fill="#fff" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M26 38 C26 35, 30 34, 32 37 C34 34, 38 35, 38 38 C38 42, 32 45, 32 45 C32 45, 26 42, 26 38 Z" fill="#ff4f8b" stroke="#16203f" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-settings" viewBox="0 0 64 64">
+      <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#gGrey)" stroke="#16203f" stroke-width="3"/>
+      <use href="#gloss"/>
+      <path d="M32 13 L36 13 L37.5 19 L42 21 L47 18 L50 21 L47 26 L49 30.5 L55 32 L55 36 L49 37.5 L47 42 L50 47 L47 50 L42 47 L37.5 49 L36 55 L32 55 L30.5 49 L26 47 L21 50 L18 47 L21 42 L19 37.5 L13 36 L13 32 L19 30.5 L21 26 L18 21 L21 18 L26 21 L30.5 19 Z" transform="translate(-0 -2)" fill="#fff" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="34" cy="32" r="7" fill="url(#gBlue)" stroke="#16203f" stroke-width="3"/>
+    </symbol>
+
+    <!-- small icons -->
+    <symbol id="s-coin" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="url(#gCoin)" stroke="#16203f" stroke-width="3"/><path d="M24 13.5 C22.5 11.5, 17 11.5, 16.8 16 C16.5 19, 17.3 22, 16.3 26 H25 M14.5 20 H22" fill="none" stroke="#16203f" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="s-sun" viewBox="0 0 40 40"><g stroke="#16203f" stroke-width="2.5" stroke-linecap="round"><path d="M20 3v5M20 32v5M3 20h5M32 20h5M8 8l3.5 3.5M28.5 28.5L32 32M8 32l3.5-3.5M28.5 11.5L32 8" stroke="#ffcc33" stroke-width="3.5"/></g><circle cx="20" cy="20" r="9" fill="url(#gCoin)" stroke="#16203f" stroke-width="3"/></symbol>
+    <symbol id="s-moon" viewBox="0 0 40 40"><path d="M27 6 C18 7, 12 14, 13 23 C14 31, 22 36, 31 33 C25 32, 20 26, 21 18 C22 12, 25 8, 27 6 Z" fill="#fff4c2" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/><circle cx="31" cy="12" r="1.8" fill="#fff"/></symbol>
+    <symbol id="s-rain" viewBox="0 0 40 40"><path d="M11 24 C6 24, 5 17, 10 16 C10 10, 17 7, 21 11 C24 7, 32 9, 31 16 C36 16, 36 24, 31 24 Z" fill="#fff" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/><path d="M14 29l-2 5M21 29l-2 5M28 29l-2 5" stroke="#4fb0ff" stroke-width="3.2" stroke-linecap="round"/></symbol>
+    <symbol id="s-star" viewBox="0 0 40 40"><path d="M20 4 L24.7 14.2 L35.8 15.4 L27.5 22.9 L29.8 33.9 L20 28.3 L10.2 33.9 L12.5 22.9 L4.2 15.4 L15.3 14.2 Z" fill="url(#gCoin)" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/><path d="M15 15.5 L19 7" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></symbol>
+    <symbol id="s-star-off" viewBox="0 0 40 40"><path d="M20 4 L24.7 14.2 L35.8 15.4 L27.5 22.9 L29.8 33.9 L20 28.3 L10.2 33.9 L12.5 22.9 L4.2 15.4 L15.3 14.2 Z" fill="#3c4f8c" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/></symbol>
+    <symbol id="s-heart" viewBox="0 0 40 40"><path d="M20 35 C 9 27, 4 21, 4 14 C 4 8, 8.5 5, 13 5 C 16.5 5, 19 7, 20 9.5 C 21 7, 23.5 5, 27 5 C 31.5 5, 36 8, 36 14 C 36 21, 31 27, 20 35 Z" fill="url(#gPink)" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/><path d="M10 12 C 10.5 9.5, 12.5 8.5, 14.5 8.6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".8"/></symbol>
+    <symbol id="s-heart-off" viewBox="0 0 40 40"><path d="M20 35 C 9 27, 4 21, 4 14 C 4 8, 8.5 5, 13 5 C 16.5 5, 19 7, 20 9.5 C 21 7, 23.5 5, 27 5 C 31.5 5, 36 8, 36 14 C 36 21, 31 27, 20 35 Z" fill="#3c4f8c" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/></symbol>
+    <symbol id="s-target" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="#fff" stroke="#16203f" stroke-width="3"/><circle cx="20" cy="20" r="9.5" fill="#ff4f5e" stroke="#16203f" stroke-width="2.5"/><circle cx="20" cy="20" r="4" fill="#fff" stroke="#16203f" stroke-width="2.2"/></symbol>
+    <symbol id="s-hunger" viewBox="0 0 40 40"><circle cx="20" cy="21" r="14" fill="#fff" stroke="#16203f" stroke-width="3"/><circle cx="20" cy="21" r="8" fill="#ffd27a" stroke="#16203f" stroke-width="2.4"/><path d="M5 6v9M8 6v9M5 11h3M6.5 15v18" stroke="#16203f" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="s-energy" viewBox="0 0 40 40"><path d="M23 3 L9 23 H19 L16 37 L31 16 H21 Z" fill="url(#gCoin)" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/></symbol>
+    <symbol id="s-hygiene" viewBox="0 0 40 40"><path d="M20 4 C 26 12, 31 18, 31 25 A 11 11 0 0 1 9 25 C 9 18, 14 12, 20 4 Z" fill="url(#gBlue)" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/><path d="M14 25 C 14 21, 16 18, 18 16" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="s-fun" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="url(#gCoin)" stroke="#16203f" stroke-width="3"/><circle cx="14.5" cy="17" r="2.4" fill="#16203f"/><circle cx="25.5" cy="17" r="2.4" fill="#16203f"/><path d="M12 23 C 15 30, 25 30, 28 23 Z" fill="#fff" stroke="#16203f" stroke-width="2.5" stroke-linejoin="round"/></symbol>
+    <symbol id="s-social" viewBox="0 0 40 40"><circle cx="15" cy="15" r="6" fill="#fff" stroke="#16203f" stroke-width="2.8"/><circle cx="27" cy="14" r="5" fill="#ffe2c7" stroke="#16203f" stroke-width="2.6"/><path d="M5 33 C5 25, 10 22, 15 22 C20 22, 25 25, 25 33 Z" fill="url(#gPurple)" stroke="#16203f" stroke-width="2.8" stroke-linejoin="round"/><path d="M24 22 C 29 21, 35 23, 35 30 H 27" fill="url(#gTeal)" stroke="#16203f" stroke-width="2.6" stroke-linejoin="round"/></symbol>
+    <symbol id="s-chat" viewBox="0 0 40 40"><path d="M6 14 C6 9, 9 7, 14 7 H27 C31 7, 34 9, 34 14 V21 C34 26, 31 28, 27 28 H18 L10 34 L12 28 C8 27, 6 25, 6 21 Z" fill="#fff" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/><circle cx="14" cy="17.5" r="2.3" fill="#16203f"/><circle cx="20" cy="17.5" r="2.3" fill="#16203f"/><circle cx="26" cy="17.5" r="2.3" fill="#16203f"/></symbol>
+    <symbol id="s-laugh" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="url(#gCoin)" stroke="#16203f" stroke-width="3"/><path d="M11 16 l4 -2 M29 16 l-4 -2" stroke="#16203f" stroke-width="2.6" stroke-linecap="round"/><path d="M11 21 C 13 30, 27 30, 29 21 Z" fill="#c4234c" stroke="#16203f" stroke-width="2.5" stroke-linejoin="round"/></symbol>
+    <symbol id="s-wink" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="url(#gCoin)" stroke="#16203f" stroke-width="3"/><circle cx="14" cy="17" r="2.4" fill="#16203f"/><path d="M23 17 h6" stroke="#16203f" stroke-width="2.6" stroke-linecap="round"/><path d="M13 24 C 17 28, 24 28, 27 23" stroke="#16203f" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M30 6 C 32 3, 36 4, 35 8 C 34 10, 31 12, 31 12 C 31 12, 28 9, 30 6 Z" fill="#ff4f8b" stroke="#16203f" stroke-width="1.8"/></symbol>
+    <symbol id="s-pint" viewBox="0 0 40 40"><path d="M9 11 H27 L25 35 C25 36, 24 37, 23 37 H13 C12 37, 11 36, 11 35 Z" fill="#f5a623" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/><path d="M27 15 C 33 15, 34 25, 26 27" fill="none" stroke="#16203f" stroke-width="3"/><path d="M8 11 C 8 6, 13 5, 15 7 C 17 4, 23 4, 24 7 C 27 6, 30 8, 28 12 Z" fill="#fff" stroke="#16203f" stroke-width="2.6" stroke-linejoin="round"/></symbol>
+    <symbol id="s-gift" viewBox="0 0 40 40"><rect x="6" y="16" width="28" height="19" rx="3" fill="url(#gPink)" stroke="#16203f" stroke-width="3"/><rect x="4" y="11" width="32" height="7" rx="2" fill="url(#gPink)" stroke="#16203f" stroke-width="3"/><path d="M20 11 V35" stroke="#ffe066" stroke-width="4"/><path d="M20 11 C 14 3, 8 8, 13 11 M20 11 C 26 3, 32 8, 27 11" fill="none" stroke="#16203f" stroke-width="2.6"/></symbol>
+    <symbol id="s-wave" viewBox="0 0 40 40"><path d="M14 33 C 8 28, 7 21, 9 17 L 12 11 C 13 9, 16 10, 15 12 L 13 17 L 18 7 C 19 5, 22 6, 21 8 L 17 17 L 22 6 C 23 4, 26 5, 25 7 L 21 17 L 25 9 C 26 7, 29 8, 28 10 L 24 19 C 27 17, 31 18, 30 21 C 27 26, 25 31, 20 34 Z" fill="#ffe2c7" stroke="#16203f" stroke-width="2.6" stroke-linejoin="round"/></symbol>
+    <symbol id="s-croissant" viewBox="0 0 64 64"><path d="M8 40 C 10 26, 22 16, 32 16 C 42 16, 54 26, 56 40 C 50 36, 46 38, 44 42 C 40 34, 36 32, 32 32 C 28 32, 24 34, 20 42 C 18 38, 14 36, 8 40 Z" fill="url(#gGold)" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/><path d="M24 22 L27 31 M32 18 L32 31 M40 22 L37 31" stroke="#b86e12" stroke-width="2.5" stroke-linecap="round"/></symbol>
+    <symbol id="s-coffee" viewBox="0 0 64 64"><path d="M16 22 H44 L41 52 C41 54, 39 55, 37 55 H23 C21 55, 19 54, 19 52 Z" fill="#fff" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/><rect x="14" y="16" width="32" height="8" rx="3" fill="#8a5430" stroke="#16203f" stroke-width="3"/><rect x="19" y="32" width="22" height="10" rx="2" fill="#2b9b6b" stroke="#16203f" stroke-width="2.5"/><path d="M26 6 C 24 9, 28 10, 26 13 M33 6 C 31 9, 35 10, 33 13" stroke="#9fb4e6" stroke-width="2.4" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="s-sandwich" viewBox="0 0 64 64"><path d="M8 40 L32 14 L56 40 Z" fill="#ffe7b0" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/><path d="M10 40 H54 V46 H10 Z" fill="#7ed957" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/><path d="M10 46 H54 L56 52 H8 Z" fill="#ff7a6b" stroke="#16203f" stroke-width="3" stroke-linejoin="round"/><path d="M8 52 H56 V56 H8 Z" fill="#ffe7b0" stroke="#16203f" stroke-width="3"/></symbol>
+  </defs>
+</svg>
+
+<!-- =================== 1. Phone over the street =================== -->
+<section class="frame" id="phone" style="background-image:url(bg-day.jpg)">
+  <div class="shade" style="background:linear-gradient(90deg, rgba(10,16,40,0) 40%, rgba(10,16,40,.45) 75%)"></div>
+
+  <div class="topbar">
+    <div class="val"><svg><use href="#s-coin"/></svg><span class="outlined">120.00</span></div>
+    <div class="val"><svg><use href="#s-sun"/></svg><span class="outlined">12:24</span></div>
+    <div class="right outlined">ALBION PARK <span>·</span> TUESDAY</div>
+  </div>
+
+  <div class="goal panel">
+    <svg><use href="#s-target"/></svg>
+    <div><b class="outlined" style="-webkit-text-stroke-width:4px">Find your flat</b><small>27 Albion Road · the red door</small></div>
+  </div>
+
+  <div class="mood">
+    <div class="face"><div class="bust" data-who="player" data-mood="happy"></div></div>
+    <div class="panel moodbox">
+      <div class="who">Ada <div class="tiny-needs"><svg><use href="#s-hunger"/></svg><svg><use href="#s-social"/></svg></div></div>
+      <div class="bar"><div class="fill" style="width:72%; background:linear-gradient(180deg, #a6f27a, #33b43c)"></div><div class="word outlined">HAPPY</div></div>
+    </div>
+  </div>
+
+  <div class="phone" style="right:130px; top:96px">
+    <div class="screen">
+      <div class="notch"></div>
+      <div class="status"><span>12:24</span><span>▮▮▮ 92%</span></div>
+      <svg class="skyline" viewBox="0 0 300 90" preserveAspectRatio="none">
+        <path d="M0 90 V62 H18 V54 H30 V62 H44 V40 L50 30 L56 40 V62 H70 V50 H84 V62 H96 V28 H100 V14 H104 V6 L106 0 L108 6 V14 H112 V28 H116 V62 H132 V46 H150 V62 H160 V36 L174 4 L188 36 V62 H200 V52 H214 V44 H226 V62 H240 V30 C 240 20, 258 20, 258 30 V62 H272 V48 H288 V62 H300 V90 Z" fill="#2a2f6e" opacity=".85"/>
+        <path d="M0 90 V72 H40 V66 H90 V74 H150 V68 H220 V74 H300 V90 Z" fill="#1b2152"/>
+      </svg>
+      <div class="clock">
+        <div class="t outlined">12:24</div>
+        <div class="d">Tuesday, 4 November</div>
+        <div class="weatherchip"><svg><use href="#s-sun"/></svg>14° · Clear in London</div>
+      </div>
+      <div class="apps">
+        <div class="app"><svg><use href="#i-messages"/></svg>Messages<span class="badge">2</span></div>
+        <div class="app"><svg><use href="#i-contacts"/></svg>Contacts</div>
+        <div class="app"><svg><use href="#i-jobs"/></svg>Jobs</div>
+        <div class="app"><svg><use href="#i-bank"/></svg>Bank</div>
+        <div class="app"><svg><use href="#i-map"/></svg>Map</div>
+        <div class="app"><svg><use href="#i-stats"/></svg>Stats</div>
+        <div class="app"><svg><use href="#i-goals"/></svg>Goals</div>
+        <div class="app"><svg><use href="#i-shop"/></svg>Shop</div>
+        <div class="app"><svg><use href="#i-settings"/></svg>Settings</div>
+      </div>
+      <div class="homebar"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== 2. A conversation =================== -->
+<section class="frame" id="talk" style="background-image:url(bg-night.jpg)">
+  <div class="shade" style="background:linear-gradient(180deg, rgba(10,16,40,.05) 30%, rgba(10,16,40,.6) 100%)"></div>
+  <div class="topbar">
+    <div class="val"><svg><use href="#s-coin"/></svg><span class="outlined">342.50</span></div>
+    <div class="val"><svg><use href="#s-rain"/></svg><span class="outlined">21:30</span></div>
+    <div class="right outlined">SOHO <span>·</span> FRIDAY</div>
+  </div>
+
+  <div class="reward panel"><svg><use href="#s-star"/></svg><span class="outlined" style="-webkit-text-stroke-width:5px">Priya liked your banter! +4</span></div>
+
+  <div class="talk panel">
+    <div class="card-bg"><div class="bust" data-who="priya" data-mood="happy"></div></div>
+    <div class="nametag panel"><b class="outlined">Priya</b><span class="role">A&amp;E nurse · 26</span></div>
+    <div class="ratings panel">
+      <span class="label">FRIENDS</span>
+      <svg><use href="#s-star"/></svg><svg><use href="#s-star"/></svg><svg><use href="#s-star"/></svg><svg><use href="#s-star-off"/></svg><svg><use href="#s-star-off"/></svg>
+      <span class="label" style="margin-left:10px">LOVE</span>
+      <svg><use href="#s-heart"/></svg><svg><use href="#s-heart"/></svg><svg><use href="#s-heart-off"/></svg><svg><use href="#s-heart-off"/></svg><svg><use href="#s-heart-off"/></svg>
+    </div>
+    <p class="speech">“Nights all week at the Royal London. If I look dead inside, that's why. <em>You're the new one off Albion Road, aren't you?</em>”</p>
+    <div class="choices">
+      <span class="btn white"><svg><use href="#s-chat"/></svg>Chat</span>
+      <span class="btn gold"><svg><use href="#s-laugh"/></svg>Banter</span>
+      <span class="btn red pressed"><svg><use href="#s-wink"/></svg>Flirt</span>
+      <span class="btn green"><svg><use href="#s-pint"/></svg>Pint? £6</span>
+      <span class="btn blue"><svg><use href="#s-gift"/></svg>Give a gift</span>
+      <span class="btn white"><svg><use href="#s-wave"/></svg>Bye</span>
+    </div>
+  </div>
+</section>
+
+<!-- =================== 3. Inside a shop =================== -->
+<section class="frame" id="shop" style="background-image:url(bg-day.jpg)">
+  <div class="shade" style="background:rgba(10,16,40,.35)"></div>
+  <div class="topbar">
+    <div class="val"><svg><use href="#s-coin"/></svg><span class="outlined">120.00</span></div>
+    <div class="val"><svg><use href="#s-sun"/></svg><span class="outlined">08:10</span></div>
+    <div class="right outlined">ALBION PARK <span>·</span> WEDNESDAY</div>
+  </div>
+  <div class="mood">
+    <div class="face"><div class="bust" data-who="player" data-mood="meh"></div></div>
+    <div class="panel moodbox">
+      <div class="who">Ada <div class="tiny-needs"><svg><use href="#s-hunger"/></svg></div></div>
+      <div class="bar"><div class="fill" style="width:44%; background:linear-gradient(180deg, #ffe07a, #e0901c)"></div><div class="word outlined">MEH</div></div>
+    </div>
+  </div>
+  <div class="place panel">
+    <div class="head"><div class="awning"></div><h3 class="outlined">Crumbs</h3><p>Bakers since last Tuesday</p>
+      <span class="role" style="position:absolute; left:22px; top:46px">Open 7am – 7pm</span>
+      <svg style="position:absolute; right:14px; top:36px; width:96px; height:96px; filter:drop-shadow(0 4px 0 rgba(22,32,63,.5))"><use href="#s-croissant"/></svg></div>
+    <div class="item card"><svg><use href="#s-croissant"/></svg><div><b>Croissant</b><small>Flaky. Buttery. Gone in seconds.</small><div class="chips"><span class="chip up">Hunger +18</span><span class="chip up">Fun +2</span></div></div><span class="btn green">£2.40</span></div>
+    <div class="item card"><svg><use href="#s-coffee"/></svg><div><b>Flat white</b><small>Tastes like a deadline.</small><div class="chips"><span class="chip up">Energy +15</span><span class="chip down">Hygiene −2</span></div></div><span class="btn green">£3.20</span></div>
+    <div class="item card"><svg><use href="#s-sandwich"/></svg><div><b>Meal deal</b><small>Sandwich, crisps and a drink.</small><div class="chips"><span class="chip up">Hunger +40</span></div></div><span class="btn green">£4.00</span></div>
+    <div style="display:flex; gap:12px; margin: 18px 18px 0"><span class="btn blue" style="flex:1"><svg><use href="#i-jobs"/></svg>Ask about work</span><span class="btn white">Leave</span></div>
+  </div>
+</section>
+
+<!-- =================== 4. The kit =================== -->
+<section class="frame sheet" id="kit">
+  <h1 class="outlined">UK Life · UI kit</h1>
+  <div class="grid">
+    <div>
+      <h2>APP ICONS</h2>
+      <div class="row iconrow">
+        <svg><use href="#i-messages"/></svg><svg><use href="#i-contacts"/></svg><svg><use href="#i-jobs"/></svg><svg><use href="#i-bank"/></svg><svg><use href="#i-map"/></svg>
+        <svg><use href="#i-stats"/></svg><svg><use href="#i-goals"/></svg><svg><use href="#i-shop"/></svg><svg><use href="#i-settings"/></svg>
+      </div>
+      <h2 style="margin-top:22px">GAME ICONS</h2>
+      <div class="row smallicons">
+        <svg><use href="#s-coin"/></svg><svg><use href="#s-sun"/></svg><svg><use href="#s-moon"/></svg><svg><use href="#s-rain"/></svg>
+        <svg><use href="#s-star"/></svg><svg><use href="#s-heart"/></svg><svg><use href="#s-target"/></svg>
+        <svg><use href="#s-hunger"/></svg><svg><use href="#s-energy"/></svg><svg><use href="#s-hygiene"/></svg><svg><use href="#s-fun"/></svg><svg><use href="#s-social"/></svg>
+        <svg><use href="#s-pint"/></svg><svg><use href="#s-gift"/></svg>
+      </div>
+      <h2 style="margin-top:22px">BUTTONS</h2>
+      <div class="row">
+        <span class="btn red">Arrive in London</span><span class="btn blue">Take the Tube</span><span class="btn green">£2.40</span>
+        <span class="btn gold">Pay rent</span><span class="btn white">Cancel</span><span class="btn red pressed">Pressed</span><span class="btn disabled">Locked</span>
+      </div>
+    </div>
+    <div>
+      <h2>TYPE</h2>
+      <div class="typo"><div class="big outlined">Lilita One · labels &amp; buttons</div><p>Fredoka for everything you read: chats, tips, prices and descriptions. Friendly, rounded and easy on a phone.</p></div>
+      <h2 style="margin-top:22px">MOOD</h2>
+      <div style="display:grid; gap:10px">
+        <div class="bar"><div class="fill" style="width:92%; background:linear-gradient(180deg,#7ff0b8,#14a36a)"></div><div class="word outlined">BUZZING</div></div>
+        <div class="bar"><div class="fill" style="width:70%; background:linear-gradient(180deg,#a6f27a,#33b43c)"></div><div class="word outlined">HAPPY</div></div>
+        <div class="bar"><div class="fill" style="width:42%; background:linear-gradient(180deg,#ffe07a,#e0901c)"></div><div class="word outlined">MEH</div></div>
+        <div class="bar"><div class="fill" style="width:14%; background:linear-gradient(180deg,#ff8a8a,#d02a3a)"></div><div class="word outlined">MISERABLE</div></div>
+      </div>
+      <h2 style="margin-top:22px">COLOURS</h2>
+      <div class="row">
+        <div class="swatch"><i style="background:linear-gradient(#3566d6,#17337f)"></i>Royal</div>
+        <div class="swatch"><i style="background:#16203f"></i>Ink</div>
+        <div class="swatch"><i style="background:linear-gradient(#ff5a6a,#d9223f)"></i>Bus red</div>
+        <div class="swatch"><i style="background:linear-gradient(#8ef06a,#2fae3b)"></i>Go</div>
+        <div class="swatch"><i style="background:linear-gradient(#ffe066,#f2a81d)"></i>Gold</div>
+        <div class="swatch"><i style="background:linear-gradient(#ff9ccc,#e3398a)"></i>Love</div>
+        <div class="swatch"><i style="background:#fff8e8"></i>Cream</div>
+      </div>
+    </div>
+  </div>
+  <div class="credit">Icons drawn for UK Life · fonts: Lilita One &amp; Fredoka (SIL Open Font License)</div>
+</section>
+
+
+<!-- =================== 5. Portraits: before and after =================== -->
+<section class="frame compare" id="faces">
+  <h1 class="outlined">Characters: 3D render vs illustrated portrait</h1>
+  <div style="display:flex; gap:46px; align-items:flex-start">
+    <div>
+      <div class="h2">PRIYA, IN A CONVERSATION</div>
+      <div class="pair">
+        <div class="pcard"><img src="portrait-priya.png" alt=""><span class="tag before">Now</span></div>
+        <div class="pcard"><div class="bust" data-who="priya" data-mood="happy"></div><span class="tag after">New</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="h2">YOUR FACE IN THE HUD FOLLOWS YOUR MOOD</div>
+      <div class="moods">
+        <div class="mface"><div class="ring"><div class="bust" data-who="player" data-mood="buzzing"></div></div>BUZZING</div>
+        <div class="mface"><div class="ring"><div class="bust" data-who="player" data-mood="happy"></div></div>HAPPY</div>
+        <div class="mface"><div class="ring"><div class="bust" data-who="player" data-mood="meh"></div></div>MEH</div>
+        <div class="mface"><div class="ring"><div class="bust" data-who="player" data-mood="fedup"></div></div>FED UP</div>
+        <div class="mface"><div class="ring"><div class="bust" data-who="player" data-mood="miserable"></div></div>MISERABLE</div>
+      </div>
+    </div>
+  </div>
+  <div class="h2">THE WHOLE CAST, DRAWN FROM THEIR IN-GAME LOOKS</div>
+  <div class="cast" id="cast"></div>
+  <div class="panel" style="position:absolute; left:40px; right:40px; bottom:34px; padding:16px 22px; display:flex; gap:18px; align-items:center">
+    <svg style="width:48px;height:48px;flex:none"><use href="#s-star"/></svg>
+    <p style="font-size:19px; font-weight:600; line-height:1.35">Drawn from the same skin, hair, hairstyle and outfit as each 3D model, so they always match. Change your hair or buy a suit and your portrait changes with it. In the street the 3D people stay small, like in the games you showed me; the faces you look at up close are these.</p>
+  </div>
+</section>
+
+<script type="module">
+  import { portraitSVG } from "./portraits.js";
+  const cast = await (await fetch("cast.json")).json();
+  const looks = Object.fromEntries(cast.map((c) => [c.id, c.look]));
+  looks.player = { skin: "#8d5a3b", hair: "#2a1a10", jacket: "#be185d", trousers: "#1f2a44", hairStyle: "long", gender: "female", outfit: "female-casual" };
+  document.getElementById("cast").innerHTML = cast.map((c) => `<div class="mface"><div class="ring"><div class="bust" data-who="${c.id}" data-mood="happy"></div></div>${c.name}<small>${c.role}</small></div>`).join("");
+  for (const el of document.querySelectorAll(".bust")) el.innerHTML = portraitSVG(looks[el.dataset.who], { mood: el.dataset.mood, name: el.dataset.who });
+  document.body.dataset.ready = "1";
+</script>
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+[
+{
+"id": "priya",
+"name": "Priya",
+"age": 26,
+"role": "A&E nurse",
+"look": {
+"skin": "#a8724f",
+"hair": "#1c1410",
+"jacket": "#2f4f6f",
+"trousers": "#1f2430",
+"hairStyle": "long",
+"gender": "female",
+"outfit": "female-casual"
+}
+},
+{
+"id": "tunde",
+"name": "Tunde",
+"age": 24,
+"role": "Music producer",
+"look": {
+"skin": "#5a3a26",
+"hair": "#0e0b09",
+"jacket": "#c2410c",
+"trousers": "#2a2a2a",
+"hairStyle": "afro",
+"gender": "male",
+"outfit": "male-hoodie"
+}
+},
+{
+"id": "gaz",
+"name": "Gaz",
+"age": 52,
+"role": "Ex-cabbie, pub regular",
+"look": {
+"skin": "#e0b49a",
+"hair": "#9a9a9a",
+"jacket": "#3b3b2f",
+"trousers": "#2b3442",
+"hairStyle": "bald",
+"gender": "male",
+"outfit": "male-casual"
+}
+},
+{
+"id": "chloe",
+"name": "Chloe",
+"age": 21,
+"role": "Art student",
+"look": {
+"skin": "#f1c9ad",
+"hair": "#b5532a",
+"jacket": "#5b7a3a",
+"trousers": "#262b3d",
+"hairStyle": "bun",
+"gender": "female",
+"outfit": "female-dress"
+}
+},
+{
+"id": "mo",
+"name": "Mo",
+"age": 33,
+"role": "Runs Kwik Mart",
+"look": {
+"skin": "#8d5a3b",
+"hair": "#120d0a",
+"jacket": "#14532d",
+"trousers": "#1f2937",
+"hairStyle": "short",
+"gender": "male",
+"outfit": "male-casual"
+}
+},
+{
+"id": "siobhan",
+"name": "Siobhan",
+"age": 34,
+"role": "Personal trainer",
+"look": {
+"skin": "#f3d2c1",
+"hair": "#d8b25a",
+"jacket": "#be185d",
+"trousers": "#111827",
+"hairStyle": "long",
+"gender": "female",
+"outfit": "female-shorts"
+}
+},
+{
+"id": "marcus",
+"name": "Marcus",
+"age": 31,
+"role": "Investment banker",
+"look": {
+"skin": "#e0b49a",
+"hair": "#3b2416",
+"jacket": "#1f2937",
+"trousers": "#1f2937",
+"hairStyle": "short",
+"gender": "male",
+"outfit": "male-suit"
+}
+},
+{
+"id": "ingrid",
+"name": "Ingrid",
+"age": 44,
+"role": "HR director",
+"look": {
+"skin": "#f3d2c1",
+"hair": "#c9a15a",
+"jacket": "#5b2333",
+"trousers": "#111827",
+"hairStyle": "bun",
+"gender": "female",
+"outfit": "female-suit"
+}
+},
+{
+"id": "jules",
+"name": "Jules",
+"age": 27,
+"role": "Club promoter",
+"look": {
+"skin": "#8d5a3b",
+"hair": "#120d0a",
+"jacket": "#6b21a8",
+"trousers": "#111111",
+"hairStyle": "cap",
+"gender": "nonbinary",
+"outfit": "male-hoodie"
+}
+},
+{
+"id": "mei",
+"name": "Mei",
+"age": 29,
+"role": "Chef at Dragon Gate",
+"look": {
+"skin": "#f1d1b5",
+"hair": "#0e0b09",
+"jacket": "#f3f4f6",
+"trousers": "#1f2937",
+"hairStyle": "bun",
+"gender": "female",
+"outfit": "female-casual"
+}
+},
+{
+"id": "rafa",
+"name": "Rafa",
+"age": 23,
+"role": "Busker",
+"look": {
+"skin": "#c68a63",
+"hair": "#3b2416",
+"jacket": "#7c2d12",
+"trousers": "#1f2a44",
+"hairStyle": "long",
+"gender": "male",
+"outfit": "male-backpacker"
+}
+},
+{
+"id": "nia",
+"name": "Nia",
+"age": 35,
+"role": "Runs a vintage stall",
+"look": {
+"skin": "#5a3a26",
+"hair": "#0e0b09",
+"jacket": "#14532d",
+"trousers": "#4a3f35",
+"hairStyle": "afro",
+"gender": "female",
+"outfit": "female-dress"
+}
+}
+]
